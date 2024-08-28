@@ -14,20 +14,20 @@ class RetroGameInfoView(discord.ui.View):
         await interaction.response.defer()
 
         # Setup Variables
-        game_title: str = self.dict_game_info_and_progress_stdout.get("title")
-        game_icon: str = "https://media.retroachievements.org" + self.dict_game_info_and_progress_stdout.get("imageIcon")
-        game_developer: str = self.dict_game_info_and_progress_stdout.get("developer")
-        game_publisher: str = self.dict_game_info_and_progress_stdout.get("publisher")
-        game_genre: str = self.dict_game_info_and_progress_stdout.get("genre")
-        game_release_date: str = self.dict_game_info_and_progress_stdout.get("released")
-        game_console: str = self.dict_game_info_and_progress_stdout.get("consoleName")
+        game_title: str = self.dict_game_info_and_progress_stdout.get("title", "GET-FAILED")
+        game_icon: str = "https://media.retroachievements.org" + self.dict_game_info_and_progress_stdout.get("imageIcon", "GET-FAILED")
+        game_developer: str = self.dict_game_info_and_progress_stdout.get("developer", "GET-FAILED")
+        game_publisher: str = self.dict_game_info_and_progress_stdout.get("publisher", "GET-FAILED")
+        game_genre: str = self.dict_game_info_and_progress_stdout.get("genre", "GET-FAILED")
+        game_release_date: str = self.dict_game_info_and_progress_stdout.get("released", "GET-FAILED")
+        game_console: str = self.dict_game_info_and_progress_stdout.get("consoleName", "GET-FAILED")
 
-        game_achievement_count: int = self.dict_game_info_and_progress_stdout.get("numAchievements")
-        user_unlocked_softcore: int = self.dict_game_info_and_progress_stdout.get("numAwardedToUser")
-        user_unlocked_hardcore: int = self.dict_game_info_and_progress_stdout.get("numAwardedToUserHardcore")
+        game_achievement_count: int = self.dict_game_info_and_progress_stdout.get("numAchievements", "GET-FAILED")
+        user_unlocked_softcore: int = self.dict_game_info_and_progress_stdout.get("numAwardedToUser", "GET-FAILED")
+        user_unlocked_hardcore: int = self.dict_game_info_and_progress_stdout.get("numAwardedToUserHardcore", "GET-FAILED")
         
-        user_completion_softcore: str = self.dict_game_info_and_progress_stdout.get("userCompletion")
-        user_completion_hardcore: str = self.dict_game_info_and_progress_stdout.get("userCompletionHardcore")
+        user_completion_softcore: str = self.dict_game_info_and_progress_stdout.get("userCompletion", "GET-FAILED")
+        user_completion_hardcore: str = self.dict_game_info_and_progress_stdout.get("userCompletionHardcore", "GET-FAILED")
 
         # Construct Embed
         output_embed: discord.Embed = discord.Embed(title = game_title, color = blue, description = "")
