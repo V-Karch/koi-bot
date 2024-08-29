@@ -1,8 +1,14 @@
 import os
 import typing
 import discord
+import importlib
 from discord.ext import commands
 
+Logger = importlib.import_module("debug-logger.Logger").Logger
+# Required since debug-logger has a space in it as a submodule
+
+logger: Logger = Logger()
+logger.display_notice("Debug Logger Initialized")
 
 OWNER_ID = 923600698967461898  # My user ID if someone is cloning this bot from github, this must be changed
 
@@ -36,12 +42,15 @@ def load_token() -> str:
     Args: None
     Returns (str): The bot's authorization token
     """
-    with open("token.txt", "r", encoding="utf-8") as f:
-        token: str = f.read()
-
-    return token.strip()
-
-
+    try:
+        with open("token.txt", "r", encoding="utf-8") as f:
+            token: str = f.read()
+            
+        return token.strip()
+    except Exception as exception:
+        logger.display_error("Failed to read token.txt when calling load_token() in main.py")
+        exit(1) # Exit with code 1 if token can't be read
+        
 def cprint(text: str, rgb: tuple[int]) -> None:
     """Prints text in any color provided RGB values
 
@@ -57,9 +66,8 @@ def cprint(text: str, rgb: tuple[int]) -> None:
 
     for color_value in rgb:
         if not (0 <= color_value <= 255):
-            raise IndexError(
-                f"Color value cannot be out of range 0-255.\n Values given: {rgb}"
-            )  # Tells the user they messed up and explains how
+            logger.display_error(f"Color value cannot be out of range 0-255.\n Values given: {rgb}")
+            exit(1) # # Tells the user they messed up and explains how
 
     output_template: str = "\033[38;2;red;green;bluem{text}\033[0m"
     # ^^ Template string, replaces values red, green, blue, and text accordingly
@@ -85,21 +93,26 @@ async def load_cogs(client: commands.Bot) -> None:
     for filename in os.listdir("cogs"):  # for every cog in the cogs folder
         if filename[-1] == "y":
             # ^^ If the cog ends in "y", checking if it's a python file
-            await client.load_extension(f"cogs.{filename[:-3]}")
-            cprint(f"[+] loaded {filename}", BLUE)
-            # ^^ Load the cog into the bot
-
+            try:
+                await client.load_extension(f"cogs.{filename[:-3]}")
+                logger.display_notice(f"Cog {filename} successfully loaded")
+            except Exception as exception:
+                logger.display_error(f"Cog {filename }failed to load")
 
 client = commands.Bot(**SETUP_KWARGS)
+logger.display_notice("discord.commands.Bot Object created successfully")
 
 
 @client.command(name="sync")
 async def _sync(ctx: commands.Context):
     if ctx.author.id != OWNER_ID:
+        logger.display_error(f"User with ID {ctx.user.id} attempted to sync command tree.")
         return
 
+    logger.display_notice("Starting command tree sync")
     await client.tree.sync()
     await ctx.send("Syncing...")
+    logger.display_notice("Command tree sync has successfully been requested from discord")
 
 
 @client.event
@@ -107,9 +120,11 @@ async def on_ready() -> None:
     """This function runs when the client is "ready"
     It's current purpose is simply to notify the person running the program that
     the program is running without errors and is connected to discord"""
+    logger.display_notice("Starting cog loader")
     await load_cogs(client)
+    logger.display_notice("Attempted to load all cogs")
     cprint(STARTUP_ART, BLUE)
-    cprint(f"Is now running...", BLUE)
+    logger.display_notice("The bot is now running successfully")
 
 
 client.run(load_token())
