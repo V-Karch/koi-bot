@@ -7,7 +7,7 @@ from discord.ext import commands
 Logger = importlib.import_module("debug-logger.Logger").Logger
 # Required since debug-logger has a space in it as a submodule
 
-logger: Logger = Logger()
+logger = Logger()
 logger.display_notice("Debug Logger Initialized")
 
 OWNER_ID = 923600698967461898  # My user ID if someone is cloning this bot from github, this must be changed
