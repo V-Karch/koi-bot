@@ -65,10 +65,10 @@ class Entertainment(commands.Cog):
         logger.display_notice(f"[{interaction.user.id}] is calling /flip")
         random_number = random.randint(0, 1)
         logger.display_notice(f"[{interaction.user.id}] generated random number ({random_number})")
-        sent_message: discord.Message = await interaction.response.send_message(
+        await interaction.response.send_message(
             f"{interaction.user.mention} {'heads' if random_number else 'tails'}"
         )
-        logger.display_notice(f"[{interaction.user.id}] reply message sent to Guild [{sent_message.guild}], Channel [{sent_message.channel.id}], ID: [{sent_message.id}]")
+        logger.display_notice(f"[{interaction.user.id}] reply message sent")
 
     @app_commands.command(name="ping", description="Pong! 🏓")
     async def _ping(self, interaction: discord.Interaction):
