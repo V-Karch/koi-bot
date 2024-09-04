@@ -6,7 +6,7 @@ from discord import app_commands
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
 
-logger: Logger = Logger() # Create the debug logger
+logger: Logger = Logger(enable_timestamps=True) # Create the debug logger
 
 class Entertainment(commands.Cog):
     """Holds all entertainment commands that exsist entirely for fun and don't have a more specific purpose"""

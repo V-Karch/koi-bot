@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
 
-logger: Logger = Logger()
+logger: Logger = Logger(enable_timestamps=True)
 logger.display_notice("Debug Logger Initialized")
 
 OWNER_ID = 923600698967461898  # My user ID if someone is cloning this bot from github, this must be changed
