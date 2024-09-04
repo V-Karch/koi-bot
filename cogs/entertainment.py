@@ -4,7 +4,9 @@ import asyncio
 import requests
 from discord import app_commands
 from discord.ext import commands
+from pythondebuglogger.Logger import Logger
 
+logger: Logger = Logger() # Create the debug logger
 
 class Entertainment(commands.Cog):
     """Holds all entertainment commands that exsist entirely for fun and don't have a more specific purpose"""
@@ -60,10 +62,13 @@ class Entertainment(commands.Cog):
         1 -> Heads
         0 -> Tails"""
 
+        logger.display_notice(f"[{interaction.user.id}] is calling /flip")
         random_number = random.randint(0, 1)
-        await interaction.response.send_message(
+        logger.display_notice(f"[{interaction.user.id}] generated random number ({random_number})")
+        sent_message: discord.Message = await interaction.response.send_message(
             f"{interaction.user.mention} {'heads' if random_number else 'tails'}"
         )
+        logger.display_notice(f"[{interaction.user.id}] reply message sent to Guild [{sent_message.guild}], Channel [{sent_message.channel.id}], ID: [{sent_message.id}]")
 
     @app_commands.command(name="ping", description="Pong! 🏓")
     async def _ping(self, interaction: discord.Interaction):
