@@ -43,7 +43,7 @@ async def send_response_message_with_logs(
     embed: discord.Embed = None,
     view: discord.ui.View = None,
     ephemeral: bool = False,
-) -> discord.Message | False:
+) -> discord.Message | bool:
     """Calls `await interaction.response.send_message()`
     with the provided arguments, quality of life function to make
     logging easier
@@ -98,7 +98,7 @@ async def send_followup_message_with_logs(
     embed: discord.Embed = None,
     view: discord.ui.View = None,
     ephemeral: bool = False,
-) -> discord.Message | False:
+) -> discord.Message | bool:
     try:
         await interaction.followup.send(
             message=message, embed=embed, view=view, ephemeral=ephemeral
