@@ -39,7 +39,9 @@ async def send_response_message_with_logs(
     interaction: discord.Interaction,
     logger: Logger,
     command_name: str,
-    message: str,
+    message: str = None,
+    embed: discord.Embed = None,
+    view: discord.ui.View = None,
     ephemeral: bool = False,
 ) -> discord.Message | False:
     """Calls `await interaction.response.send_message()`
@@ -50,7 +52,9 @@ async def send_response_message_with_logs(
         interaction (discord.Interaction): The interaction
         logger (Logger): The logger
         command_name (str): The name of the command the logger is in
-        message (str): The message you want to send
+        message (str): The message you want to send. Defaults to None
+        embed (discord.Embed) The embed you want to send. Defaults to None
+        view (discord.ui.View) The view you want to send. Defaults to None
         ephemeral (bool, optional): Whether it should be ephemeral or not. Defaults to False.
 
     Returns:
@@ -58,7 +62,7 @@ async def send_response_message_with_logs(
     """
     try:
         message: discord.Message = await interaction.response.send_message(
-            message, ephemeral=ephemeral
+            message=message, ephemeral=ephemeral, embed=embed, view=view
         )
         logger.display_notice(
             f"[User {interaction.user.id}/{command_name}] Successfully sent reply message to [Channel {interaction.channel.id}]"
@@ -81,6 +85,44 @@ async def send_response_message_with_logs(
         return False
     except ValueError:
         logger.display_error(
-            f"User {interaction.user.id}/{command_name} The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
+            f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
         )
         return False
+
+
+async def send_followup_message_with_logs(
+    interaction: discord.Interaction,
+    logger: Logger,
+    command_name: str,
+    message: str = None,
+    embed: discord.Embed = None,
+    view: discord.ui.View = None,
+    ephemeral: bool = False,
+) -> discord.Message | False:
+    try:
+        await interaction.followup.send(
+            message=message, embed=embed, view=view, ephemeral=ephemeral
+        )
+        logger.display_notice(
+            f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"
+        )
+    except discord.HTTPException:
+        logger.display_error(
+            f"[User {interaction.user.id}/{command_name}] Message failed to send."
+        )
+    except discord.NotFound:
+        logger.display_error(
+            f"[User {interaction.user.id}/{command_name}] This webhook was not found."
+        )
+    except TypeError:
+        logger.display_error(
+            f"[User {interaction.user.id}/{command_name}] You specified both embed and embeds or file and files or thread and thread_name."
+        )
+    except ValueError:
+        logger.display_error(
+            f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
+        )
+    except discord.Forbidden:
+        logger.display_error(
+            f"[User {interaction.user.id}/{command_name}] The authorization token for the webhook is incorrect."
+        )
