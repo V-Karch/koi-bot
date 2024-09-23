@@ -6,7 +6,8 @@ from discord import app_commands
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
 
-logger: Logger = Logger(enable_timestamps=True) # Create the debug logger
+logger: Logger = Logger(enable_timestamps=True)  # Create the debug logger
+
 
 class Entertainment(commands.Cog):
     """Holds all entertainment commands that exsist entirely for fun and don't have a more specific purpose"""
@@ -64,7 +65,9 @@ class Entertainment(commands.Cog):
 
         logger.display_notice(f"[{interaction.user.id}] is calling /flip")
         random_number = random.randint(0, 1)
-        logger.display_notice(f"[{interaction.user.id}] generated random number ({random_number})")
+        logger.display_notice(
+            f"[{interaction.user.id}] generated random number ({random_number})"
+        )
         await interaction.response.send_message(
             f"{interaction.user.mention} {'heads' if random_number else 'tails'}"
         )

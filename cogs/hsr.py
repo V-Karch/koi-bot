@@ -217,8 +217,10 @@ class HSR(commands.Cog):
 
         for character in hsr_info.characters:
             if character.light_cone is None:
-                lightcone_cards[character.name] = discord.Embed(title = "No Lightcone :(", color=0xff0000)
-                break # If there is no lightcone, exit loop
+                lightcone_cards[character.name] = discord.Embed(
+                    title="No Lightcone :(", color=0xFF0000
+                )
+                break  # If there is no lightcone, exit loop
 
             lightcone_name = f" {character.light_cone.name}"
             lightcone_name += f" - Lvl {character.light_cone.level} / {character.light_cone.max_level}"
