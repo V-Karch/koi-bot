@@ -21,10 +21,15 @@ class Entertainment(commands.Cog):
         The string will be a url to an anime gif hug."""
 
         hug_api_url = "https://api.otakugifs.xyz/gif?reaction=hug"
+        logger.display_notice("[get_hug_gif()] Attempting to request data from API")
         data = requests.get(hug_api_url)
 
         try:
-            return data.json().get("url")
+            url = data.json().get("url")
+            logger.display_notice(
+                "[get_hug_gif()] Successfully requested data from API"
+            )
+            return url
         except Exception as e:
             logger.display_error(
                 f"[get_hug_gif()] failed to retrieve a valid json response: {e}"
@@ -40,6 +45,8 @@ class Entertainment(commands.Cog):
         This command will send an embed in a nice format with an anime hugging gif.
         It will also ping the member and attempt to access the interaction user's avatar.
         """
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /hug")
 
         try:
             await interaction.response.defer()
@@ -60,6 +67,7 @@ class Entertainment(commands.Cog):
             )
             return
 
+        logger.display_notice(f"[{interaction.user.id}/hug] calling get_hug_gif()")
         api_results = await active_event_loop.run_in_executor(None, self.get_hug_gif)
 
         if api_results == None:
@@ -68,6 +76,7 @@ class Entertainment(commands.Cog):
             )
             return
 
+        logger.display_notice(f"[{interaction.user.name}/hug] creating hug embed")
         hug_message = f"*{interaction.user.name} is giving {user.name} a hug!*"
         if user == interaction.user or user == self.client.user:
             hug_message = f"Awh, are you lonely {interaction.user.name}? Have some hugs from me! 💙"
@@ -90,6 +99,9 @@ class Entertainment(commands.Cog):
 
         try:
             await interaction.followup.send(user.mention, embed=hug_embed)
+            logger.display_notice(
+                f"[{interaction.user.id}/hug] response sent to [Channel {interaction.channel.id}]"
+            )
         except HTTPException:
             logger.display_error(f"[{interaction.user.id}/hug] Message failed to send.")
         except NotFound:
@@ -121,7 +133,7 @@ class Entertainment(commands.Cog):
                 f"{interaction.user.mention} {'heads' if random_number else 'tails'}"
             )
             logger.display_notice(
-                f"Successfully sent reply message to {interaction.channel.id}"
+                f"Successfully sent reply message to [Channel {interaction.channel.id}]"
             )
         except Exception as e:
             logger.display_error(f"{interaction.user.id} {e}")
