@@ -99,7 +99,7 @@ async def load_cogs(client: commands.Bot) -> None:
                 await client.load_extension(f"cogs.{filename[:-3]}")
                 logger.display_notice(f"Cog {filename} successfully loaded")
             except Exception as exception:
-                logger.display_error(f"Cog {filename }failed to load")
+                logger.display_error(f"Cog {filename} failed to load")
 
 
 client = commands.Bot(**SETUP_KWARGS)
