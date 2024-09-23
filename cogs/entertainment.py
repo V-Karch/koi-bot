@@ -125,10 +125,10 @@ class Entertainment(commands.Cog):
         1 -> Heads
         0 -> Tails"""
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /flip")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /flip")
         random_number = random.randint(0, 1)
         logger.display_notice(
-            f"[{interaction.user.id}] generated random number ({random_number})"
+            f"[User {interaction.user.id}] generated random number ({random_number})"
         )
         try:
             await interaction.response.send_message(
