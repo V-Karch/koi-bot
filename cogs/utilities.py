@@ -25,7 +25,7 @@ class Utilities(commands.Cog):
         if interaction.user.id != 923600698967461898:
             await interaction.response.send_message("No.")
             return
-        
+
         await interaction.response.send_message("Restarting...")
         os.execv(sys.executable, ["python"] + sys.argv)
 
@@ -40,7 +40,7 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided automatically by discord, the interaction data from the command
             text (str): Text provided by the command user, to convert to base64
 
-        Returns (None): sends a discord embed as a result and returns nothing 
+        Returns (None): sends a discord embed as a result and returns nothing
         """
 
         await interaction.response.defer(ephemeral=True)  # Wait ephemerally
@@ -211,7 +211,7 @@ class Utilities(commands.Cog):
         # ^^ Sending the embed
 
     @app_commands.command(
-        name = "display-ip", description = "Displays the IP of the local machine"
+        name="display-ip", description="Displays the IP of the local machine"
     )
     async def _display_ip(self, interaction: discord.Interaction) -> None:
         """
@@ -222,15 +222,17 @@ class Utilities(commands.Cog):
         """
 
         if interaction.user.id != 923600698967461898:
-            await interaction.response.send_message("No.", ephemeral = True)
-            return # If user isn't me, refuse
-        
-        await interaction.response.defer(ephemeral = True) # Defer until ip is displayed
+            await interaction.response.send_message("No.", ephemeral=True)
+            return  # If user isn't me, refuse
 
-        ip_stdout = subprocess.check_output("ip a | grep inet6", shell = True)
-        modified_ip_stdout: str = ip_stdout.decode("utf-8") # Get IP
+        await interaction.response.defer(ephemeral=True)  # Defer until ip is displayed
 
-        await interaction.followup.send(f"```\n{modified_ip_stdout}\n```", ephemeral = True)
+        ip_stdout = subprocess.check_output("ip a | grep inet6", shell=True)
+        modified_ip_stdout: str = ip_stdout.decode("utf-8")  # Get IP
+
+        await interaction.followup.send(
+            f"```\n{modified_ip_stdout}\n```", ephemeral=True
+        )
 
 
 async def setup(client: commands.Bot) -> None:

@@ -7,8 +7,10 @@ class CharacterCardView(discord.ui.View):
         self,
         user_id: int,
         character: str,
-        parsed_data: typing.Dict[str, discord.Embed]
-        | typing.Dict[str, typing.Dict[str, discord.Embed]],
+        parsed_data: (
+            typing.Dict[str, discord.Embed]
+            | typing.Dict[str, typing.Dict[str, discord.Embed]]
+        ),
     ):
         self.user_id = user_id
         self.character = character
