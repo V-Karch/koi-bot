@@ -45,6 +45,7 @@ To set up Koi on your local machine, follow these steps:
 
 4. **Set up your environment variables**:
    The bot token should be placed in a file at the root of the repository named `token.txt`
+   
    Your api information for Retroachievements API should go in a file called `api_info.txt`
 
 6. **Start the bot**:
