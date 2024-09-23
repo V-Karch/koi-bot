@@ -159,6 +159,7 @@ class Entertainment(commands.Cog):
         logger.display_notice(f"[User {interaction.user.id}] is calling /ping")
         try:
             await interaction.response.send_message("Pong! 🏓", ephemeral=True)
+            logger.display_notice(f"Successfully sent reply message to [Channel {interaction.channel.id}]")
         except HTTPException:
             logger.display_error(
                 f"[User {interaction.user.id}/ping] Message failed to send."
