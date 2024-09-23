@@ -8,7 +8,7 @@ from pythondebuglogger.Logger import Logger
 
 async def defer_with_logs(
     interaction: discord.Interaction, logger: Logger, ephemeral: bool = False
-):
+) -> bool:
     """This function called interaction.response.defer() with the provided arguments.
     It will allow for easier dealing with logs and errors
 
@@ -41,7 +41,21 @@ async def send_response_message_with_logs(
     command_name: str,
     message: str,
     ephemeral: bool = False,
-):
+) -> discord.Message | False:
+    """Calls `await interaction.response.send_message()`
+    with the provided arguments, quality of life function to make
+    logging easier
+
+    Args:
+        interaction (discord.Interaction): The interaction
+        logger (Logger): The logger
+        command_name (str): The name of the command the logger is in
+        message (str): The message you want to send
+        ephemeral (bool, optional): Whether it should be ephemeral or not. Defaults to False.
+
+    Returns:
+        discord.Message | False: Returns the message object if it succeeds, otherwise False
+    """
     try:
         message: discord.Message = await interaction.response.send_message(
             message, ephemeral=ephemeral
