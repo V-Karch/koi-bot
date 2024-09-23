@@ -40,8 +40,8 @@ async def send_response_message_with_logs(
     logger: Logger,
     command_name: str,
     message: str = None,
-    embed: discord.Embed = None,
-    view: discord.ui.View = None,
+    embed: discord.Embed = discord.utils.MISSING,
+    view: discord.ui.View = discord.utils.MISSING,
     ephemeral: bool = False,
 ) -> discord.Message | bool:
     """Calls `await interaction.response.send_message()`
@@ -95,8 +95,8 @@ async def send_followup_message_with_logs(
     logger: Logger,
     command_name: str,
     message: str = None,
-    embed: discord.Embed = None,
-    view: discord.ui.View = None,
+    embed: discord.Embed = discord.utils.MISSING,
+    view: discord.ui.View = discord.utils.MISSING,
     ephemeral: bool = False,
 ) -> discord.Message | bool:
     try:
