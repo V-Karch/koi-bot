@@ -5,6 +5,11 @@ import requests
 from discord import HTTPException, InteractionResponded, NotFound, app_commands
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
+from logger_help import (
+    defer_with_logs,
+    send_followup_message_with_logs,
+    send_response_message_with_logs,
+)
 
 logger: Logger = Logger(enable_timestamps=True)  # Create the debug logger
 
@@ -48,16 +53,7 @@ class Entertainment(commands.Cog):
 
         logger.display_notice(f"[User {interaction.user.id}] is calling /hug")
 
-        try:
-            await interaction.response.defer()
-        except HTTPException:
-            logger.display_error(f"[Interaction {interaction.id}] failed to defer.")
-            return
-        except InteractionResponded:
-            logger.display_error(
-                f"[Interaction {interaction.id}] has already been responded to."
-            )
-            return
+        await defer_with_logs(interaction, logger)
 
         try:
             active_event_loop = asyncio.get_running_loop()
@@ -87,7 +83,7 @@ class Entertainment(commands.Cog):
 
         try:
             avatar_url = interaction.user.avatar.url
-        except Exception as e:
+        except Exception:
             logger.display_debug(
                 f"[User {interaction.user.id}/hug] Something is up with the users avatar."
             )
@@ -97,27 +93,9 @@ class Entertainment(commands.Cog):
             text=f"Hugs from {interaction.user.name}!", icon_url=avatar_url
         )
 
-        try:
-            await interaction.followup.send(user.mention, embed=hug_embed)
-            logger.display_notice(
-                f"[User {interaction.user.id}/hug] response sent to [Channel {interaction.channel.id}]"
-            )
-        except HTTPException:
-            logger.display_error(
-                f"[User {interaction.user.id}/hug] Message failed to send."
-            )
-        except NotFound:
-            logger.display_error(
-                f"[User {interaction.user.id}/hug] This webhook was not found."
-            )
-        except TypeError:
-            logger.display_error(
-                f"[User {interaction.user.id}/hug] You specified both embed and embeds or file and files or thread and thread_name."
-            )
-        except ValueError:
-            logger.display_error(
-                f"User {interaction.user.id}/hug The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
-            )
+        await send_followup_message_with_logs(
+            interaction, logger, "hug", user.mention, hug_embed
+        )
 
     @app_commands.command(name="flip", description="flip a coin")
     async def _flip(self, interaction: discord.Interaction):
@@ -130,52 +108,21 @@ class Entertainment(commands.Cog):
         logger.display_notice(
             f"[User {interaction.user.id}] generated random number ({random_number})"
         )
-        try:
-            await interaction.response.send_message(
-                f"{interaction.user.mention} {'heads' if random_number else 'tails'}"
-            )
-            logger.display_notice(
-                f"Successfully sent reply message to [Channel {interaction.channel.id}]"
-            )
-        except HTTPException:
-            logger.display_error(
-                f"[User {interaction.user.id}/flip] Message failed to send."
-            )
-        except NotFound:
-            logger.display_error(
-                f"[User {interaction.user.id}/flip] This webhook was not found."
-            )
-        except TypeError:
-            logger.display_error(
-                f"[User {interaction.user.id}/flip] You specified both embed and embeds or file and files or thread and thread_name."
-            )
-        except ValueError:
-            logger.display_error(
-                f"User {interaction.user.id}/flip The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
-            )
+
+        await send_response_message_with_logs(
+            interaction,
+            logger,
+            "flip",
+            f"{interaction.user.mention} {'heads' if random_number else 'tails'}",
+        )
 
     @app_commands.command(name="ping", description="Pong! 🏓")
     async def _ping(self, interaction: discord.Interaction):
         logger.display_notice(f"[User {interaction.user.id}] is calling /ping")
-        try:
-            await interaction.response.send_message("Pong! 🏓", ephemeral=True)
-            logger.display_notice(f"Successfully sent reply message to [Channel {interaction.channel.id}]")
-        except HTTPException:
-            logger.display_error(
-                f"[User {interaction.user.id}/ping] Message failed to send."
-            )
-        except NotFound:
-            logger.display_error(
-                f"[User {interaction.user.id}/ping] This webhook was not found."
-            )
-        except TypeError:
-            logger.display_error(
-                f"[User {interaction.user.id}/ping] You specified both embed and embeds or file and files or thread and thread_name."
-            )
-        except ValueError:
-            logger.display_error(
-                f"User {interaction.user.id}/ping The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
-            )
+
+        await send_response_message_with_logs(
+            interaction, logger, "ping", "Pong! 🏓", ephemeral=True
+        )
 
 
 async def setup(client: commands.Bot) -> None:
