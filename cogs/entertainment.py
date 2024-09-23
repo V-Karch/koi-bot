@@ -46,7 +46,7 @@ class Entertainment(commands.Cog):
         It will also ping the member and attempt to access the interaction user's avatar.
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /hug")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /hug")
 
         try:
             await interaction.response.defer()
@@ -63,20 +63,20 @@ class Entertainment(commands.Cog):
             active_event_loop = asyncio.get_running_loop()
         except RuntimeError:
             logger.display_error(
-                f"[{interaction.user.id}/hug] There is no running event loop."
+                f"[User {interaction.user.id}/hug] There is no running event loop."
             )
             return
 
-        logger.display_notice(f"[{interaction.user.id}/hug] calling get_hug_gif()")
+        logger.display_notice(f"[User {interaction.user.id}/hug] calling get_hug_gif()")
         api_results = await active_event_loop.run_in_executor(None, self.get_hug_gif)
 
         if api_results == None:
             logger.display_error(
-                f"[{interaction.user.id}/hug] Failed to retrieve valid json from API"
+                f"[User {interaction.user.id}/hug] Failed to retrieve valid json from API"
             )
             return
 
-        logger.display_notice(f"[{interaction.user.name}/hug] creating hug embed")
+        logger.display_notice(f"[User {interaction.user.id}/hug] creating hug embed")
         hug_message = f"*{interaction.user.name} is giving {user.name} a hug!*"
         if user == interaction.user or user == self.client.user:
             hug_message = f"Awh, are you lonely {interaction.user.name}? Have some hugs from me! 💙"
@@ -89,7 +89,7 @@ class Entertainment(commands.Cog):
             avatar_url = interaction.user.avatar.url
         except Exception as e:
             logger.display_debug(
-                f"[{interaction.user.id}/hug] Something is up with the users avatar"
+                f"[User {interaction.user.id}/hug] Something is up with the users avatar."
             )
             avatar_url = ""
 
@@ -100,21 +100,23 @@ class Entertainment(commands.Cog):
         try:
             await interaction.followup.send(user.mention, embed=hug_embed)
             logger.display_notice(
-                f"[{interaction.user.id}/hug] response sent to [Channel {interaction.channel.id}]"
+                f"[User {interaction.user.id}/hug] response sent to [Channel {interaction.channel.id}]"
             )
         except HTTPException:
-            logger.display_error(f"[{interaction.user.id}/hug] Message failed to send.")
+            logger.display_error(
+                f"[User {interaction.user.id}/hug] Message failed to send."
+            )
         except NotFound:
             logger.display_error(
-                f"[{interaction.user.id}/hug] This webhook was not found."
+                f"[User {interaction.user.id}/hug] This webhook was not found."
             )
         except TypeError:
             logger.display_error(
-                f"[{interaction.user.id}/hug] You specified both embed and embeds or file and files or thread and thread_name."
+                f"[User {interaction.user.id}/hug] You specified both embed and embeds or file and files or thread and thread_name."
             )
         except ValueError:
             logger.display_error(
-                f"{interaction.user.id}/hug The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
+                f"User {interaction.user.id}/hug The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
             )
 
     @app_commands.command(name="flip", description="flip a coin")
@@ -135,16 +137,44 @@ class Entertainment(commands.Cog):
             logger.display_notice(
                 f"Successfully sent reply message to [Channel {interaction.channel.id}]"
             )
-        except Exception as e:
-            logger.display_error(f"{interaction.user.id} {e}")
+        except HTTPException:
+            logger.display_error(
+                f"[User {interaction.user.id}/flip] Message failed to send."
+            )
+        except NotFound:
+            logger.display_error(
+                f"[User {interaction.user.id}/flip] This webhook was not found."
+            )
+        except TypeError:
+            logger.display_error(
+                f"[User {interaction.user.id}/flip] You specified both embed and embeds or file and files or thread and thread_name."
+            )
+        except ValueError:
+            logger.display_error(
+                f"User {interaction.user.id}/flip The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
+            )
 
     @app_commands.command(name="ping", description="Pong! 🏓")
     async def _ping(self, interaction: discord.Interaction):
-        logger.display_notice(f"[{interaction.user.id}] is calling /ping")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /ping")
         try:
             await interaction.response.send_message("Pong! 🏓", ephemeral=True)
-        except Exception as e:
-            logger.display_error(f"[{interaction.user.id}] {e}")
+        except HTTPException:
+            logger.display_error(
+                f"[User {interaction.user.id}/ping] Message failed to send."
+            )
+        except NotFound:
+            logger.display_error(
+                f"[User {interaction.user.id}/ping] This webhook was not found."
+            )
+        except TypeError:
+            logger.display_error(
+                f"[User {interaction.user.id}/ping] You specified both embed and embeds or file and files or thread and thread_name."
+            )
+        except ValueError:
+            logger.display_error(
+                f"User {interaction.user.id}/ping The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
+            )
 
 
 async def setup(client: commands.Bot) -> None:
