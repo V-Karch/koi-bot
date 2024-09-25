@@ -139,7 +139,11 @@ class Utilities(commands.Cog):
 
         Returns (None): Sends a discord embed as a result and returns nothing
         """
-        await interaction.response.defer()  # Wait to avoid discord's 3 second command timer
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /avatar")
+
+        await defer_with_logs(interaction, logger)
+
         if user == None:  # if the user is not supplied by the command initiator
             user = interaction.user  # The command initiator becomes the user
 
@@ -152,7 +156,10 @@ class Utilities(commands.Cog):
                 icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
             )
             # Set the footer of the embed to reflect the command initiator
-            await interaction.followup.send(embed=embed)  # Send the embed
+
+            await send_followup_message_with_logs(
+                interaction, logger, command_name="avatar", embed=embed
+            )
             return  # Return from the function early
 
         embed = discord.Embed(title=f"✅ @{user.name}'s avatar", color=blue)
@@ -164,7 +171,9 @@ class Utilities(commands.Cog):
         # If the code has passed all guard clauses
         # Create the embed with the users avatar and send it back to the user
 
-        await interaction.followup.send(embed=embed)  # Sends the embed to the user
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="avatar", embed=embed
+        )
         return
 
     @app_commands.command(name="invite", description="Invite this bot to other servers")
