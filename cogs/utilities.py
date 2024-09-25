@@ -187,7 +187,10 @@ class Utilities(commands.Cog):
         Returns (None):
             Quite literally nothing
         """
-        await interaction.response.defer(ephemeral=True)
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /invite")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         invite_url = "https://discord.com/api/oauth2/authorize?client_id=1025477778428133379&permissions=8&scope=applications.commands%20bot"
         invite_embed = discord.Embed(
             title="🎣 Invite Koi",
@@ -204,7 +207,13 @@ class Utilities(commands.Cog):
             ),
         )  # ^^ Create the button
 
-        await interaction.followup.send(embed=invite_embed, view=temporary_view)
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            command_name="invite",
+            embed=invite_embed,
+            view=temporary_view,
+        )
         # ^^ Sending the embed along with the button
         return
 
