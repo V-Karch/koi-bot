@@ -5,9 +5,18 @@ import discord
 import subprocess
 from discord import app_commands
 from discord.ext import commands
+from pythondebuglogger.Logger import Logger
+from logger_help import (
+    send_response_message_with_logs,
+    defer_with_logs,
+    send_followup_message_with_logs,
+)
 
 blue = 0x73BCF8  # Hex color blue stored for embed usage
 owner_id = 923600698967461898
+
+
+logger: Logger = Logger(enable_timestamps=True)
 
 
 class Utilities(commands.Cog):
@@ -22,11 +31,21 @@ class Utilities(commands.Cog):
 
     @app_commands.command(name="restart", description="restarts the bot")
     async def restart(self, interaction: discord.Interaction):
+        logger.display_notice(f"[{interaction.user.id}] is calling /restart")
+
         if interaction.user.id != 923600698967461898:
-            await interaction.response.send_message("No.")
+            logger.display_debug(
+                f"[{interaction.user.id}] was refused bot restart access."
+            )
+
+            await send_response_message_with_logs(
+                interaction, logger, command_name="restart", message="No."
+            )
             return
 
-        await interaction.response.send_message("Restarting...")
+        await send_response_message_with_logs(
+            interaction, logger, command_name="restart", message="Restarting..."
+        )
         os.execv(sys.executable, ["python"] + sys.argv)
 
     @app_commands.command(name="base64-encode", description="Encodes a given text")
@@ -43,7 +62,9 @@ class Utilities(commands.Cog):
         Returns (None): sends a discord embed as a result and returns nothing
         """
 
-        await interaction.response.defer(ephemeral=True)  # Wait ephemerally
+        logger.display_notice(f"[{interaction.user.id}] is calling /base64-encode")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)  # Wait ephemerally
         embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
         # ^^ Create the embed with it's constructor
         text_as_bytes: bytes = base64.b64encode(bytes(text, "utf-8"))
@@ -55,7 +76,11 @@ class Utilities(commands.Cog):
             icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
         )
         # ^^ Set the embed footer to the one who used to command
-        await interaction.followup.send(embed=embed)  # Send the resulting embed
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="base64-encode", embed=embed
+        )
+        # ^^ Send the result with logs
 
     @app_commands.command(
         name="base64-decode",
@@ -74,7 +99,9 @@ class Utilities(commands.Cog):
         Returns (None): Sends a discord embed as a result and returns nothing
         """
 
-        await interaction.response.defer(ephemeral=True)  # Waits ephemerally
+        logger.display_notice(f"[{interaction.user.id}] is calling /base64-decode")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         embed = discord.Embed(color=blue, title="✅ Base64 Decoded Result")
         # ^^ Create the embed with it's constructor
         try:  # Attempt to convert the base64 input to plain text
@@ -94,7 +121,9 @@ class Utilities(commands.Cog):
         )
         # ^^ Set the embed footer to reflect the user who called the interaction
 
-        await interaction.followup.send(embed=embed)  # Send the resulting embed
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="base64-decode", embed=embed
+        )
 
     @app_commands.command(name="avatar", description="Retrieves an avatar")
     @app_commands.describe(user="The user who you want to see the avatar of")
@@ -110,7 +139,11 @@ class Utilities(commands.Cog):
 
         Returns (None): Sends a discord embed as a result and returns nothing
         """
-        await interaction.response.defer()  # Wait to avoid discord's 3 second command timer
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /avatar")
+
+        await defer_with_logs(interaction, logger)
+
         if user == None:  # if the user is not supplied by the command initiator
             user = interaction.user  # The command initiator becomes the user
 
@@ -123,7 +156,10 @@ class Utilities(commands.Cog):
                 icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
             )
             # Set the footer of the embed to reflect the command initiator
-            await interaction.followup.send(embed=embed)  # Send the embed
+
+            await send_followup_message_with_logs(
+                interaction, logger, command_name="avatar", embed=embed
+            )
             return  # Return from the function early
 
         embed = discord.Embed(title=f"✅ @{user.name}'s avatar", color=blue)
@@ -135,7 +171,9 @@ class Utilities(commands.Cog):
         # If the code has passed all guard clauses
         # Create the embed with the users avatar and send it back to the user
 
-        await interaction.followup.send(embed=embed)  # Sends the embed to the user
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="avatar", embed=embed
+        )
         return
 
     @app_commands.command(name="invite", description="Invite this bot to other servers")
@@ -149,7 +187,10 @@ class Utilities(commands.Cog):
         Returns (None):
             Quite literally nothing
         """
-        await interaction.response.defer(ephemeral=True)
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /invite")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         invite_url = "https://discord.com/api/oauth2/authorize?client_id=1025477778428133379&permissions=8&scope=applications.commands%20bot"
         invite_embed = discord.Embed(
             title="🎣 Invite Koi",
@@ -166,7 +207,13 @@ class Utilities(commands.Cog):
             ),
         )  # ^^ Create the button
 
-        await interaction.followup.send(embed=invite_embed, view=temporary_view)
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            command_name="invite",
+            embed=invite_embed,
+            view=temporary_view,
+        )
         # ^^ Sending the embed along with the button
         return
 
@@ -177,16 +224,28 @@ class Utilities(commands.Cog):
         Args:
             interaction (discord.Interaction): Provided by discord.
         """
-        await interaction.response.defer(ephemeral=True)
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /sync")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second discord check
         if interaction.user.id != owner_id:  # If the user of the command isn't me
-            await interaction.followup.send("This command is not for you.")
+            logger.display_debug(f"[{interaction.user.id}] was refused access to /sync")
+
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                command_name="sync",
+                message="This command is not for you.",
+            )
             # ^^ Tell the user to leave it alone
             return  # Escape the function early
 
-        await interaction.followup.send(
-            "Syncing client tree."
-        )  # Respond to the user with affirmation
+        await self.client.tree.sync()
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="sync", message="Syncing client tree."
+        )
 
     @app_commands.command(
         name="about", description="Tells you what the bot is all about"
@@ -198,7 +257,9 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided by discord.
         """
 
-        await interaction.response.defer(ephemeral=True)
+        logger.display_notice(f"[{interaction.user.id}] is calling /about")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second check from discord
 
         # Creating the Embed
@@ -206,6 +267,10 @@ class Utilities(commands.Cog):
         embed.set_thumbnail(url=self.client.user.avatar.url)
         embed.description = """**Hello! I'm Koi!**\n\nI'm here to give you a good time on discord. I also have a dedicated **Honkai: Star Rail** module.\n\nI am an open source discord bot and you can find my code [here](https://github.com/Luna-Karch/koi-bot)"""
         embed.color = blue
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="about", embed=embed
+        )
 
         await interaction.followup.send(embed=embed)
         # ^^ Sending the embed
@@ -221,17 +286,33 @@ class Utilities(commands.Cog):
             None
         """
 
+        logger.display_notice(f"[{interaction.user.id}] is calling /display-ip")
+
         if interaction.user.id != 923600698967461898:
-            await interaction.response.send_message("No.", ephemeral=True)
+            logger.display_warning(
+                f"[{interaction.user.id}] was denied from using /display-ip"
+            )
+
+            await send_response_message_with_logs(
+                interaction,
+                logger,
+                command_name="display-ip",
+                message="No.",
+                ephemeral=True,
+            )
             return  # If user isn't me, refuse
 
-        await interaction.response.defer(ephemeral=True)  # Defer until ip is displayed
+        await defer_with_logs(interaction, logger, ephemeral=True)
 
         ip_stdout = subprocess.check_output("ip a | grep inet6", shell=True)
         modified_ip_stdout: str = ip_stdout.decode("utf-8")  # Get IP
 
-        await interaction.followup.send(
-            f"```\n{modified_ip_stdout}\n```", ephemeral=True
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            command_name="display-ip",
+            message=f"```\n{modified_ip_stdout}\n```",
+            ephemeral=True,
         )
 
 
