@@ -267,7 +267,7 @@ class Utilities(commands.Cog):
         # Creating the Embed
         embed: discord.Embed = discord.Embed(title="About Me 🎣")
         embed.set_thumbnail(url=self.client.user.avatar.url)
-        embed.description = """**Hello! I'm Koi!**\n\nI'm here to give you a good time on discord. I also have a dedicated **Honkai: Star Rail** module.\n\nI am an open source discord bot and you can find my code [here](https://github.com/Luna-Karch/koi-bot)"""
+        embed.description = """**Hello! I'm Koi!**\n\nI'm here to give you a good time on discord. I also have a dedicated **Honkai: Star Rail** module.\n\nI am an open source discord bot and you can find my code [here](https://github.com/V-Karch/koi-bot)"""
         embed.color = blue
 
         await send_followup_message_with_logs(
