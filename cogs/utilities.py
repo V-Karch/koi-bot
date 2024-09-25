@@ -5,9 +5,14 @@ import discord
 import subprocess
 from discord import app_commands
 from discord.ext import commands
+from pythondebuglogger.Logger import Logger
+from logger_help import send_response_message_with_logs
 
 blue = 0x73BCF8  # Hex color blue stored for embed usage
 owner_id = 923600698967461898
+
+
+logger: Logger = Logger(enable_timestamps=True)
 
 
 class Utilities(commands.Cog):
@@ -22,11 +27,21 @@ class Utilities(commands.Cog):
 
     @app_commands.command(name="restart", description="restarts the bot")
     async def restart(self, interaction: discord.Interaction):
+        logger.display_notice(f"[{interaction.user.id}] is calling /restart")
+
         if interaction.user.id != 923600698967461898:
-            await interaction.response.send_message("No.")
+            logger.display_debug(
+                f"[{interaction.user.id}] was refused bot restart access."
+            )
+
+            await send_response_message_with_logs(
+                interaction, logger, command_name="restart", message="No."
+            )
             return
 
-        await interaction.response.send_message("Restarting...")
+        await send_response_message_with_logs(
+            interaction, logger, command_name="restart", message="Restarting..."
+        )
         os.execv(sys.executable, ["python"] + sys.argv)
 
     @app_commands.command(name="base64-encode", description="Encodes a given text")
