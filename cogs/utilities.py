@@ -99,7 +99,9 @@ class Utilities(commands.Cog):
         Returns (None): Sends a discord embed as a result and returns nothing
         """
 
-        await interaction.response.defer(ephemeral=True)  # Waits ephemerally
+        logger.display_notice(f"[{interaction.user.id}] is calling /base64-decode")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         embed = discord.Embed(color=blue, title="✅ Base64 Decoded Result")
         # ^^ Create the embed with it's constructor
         try:  # Attempt to convert the base64 input to plain text
@@ -119,7 +121,9 @@ class Utilities(commands.Cog):
         )
         # ^^ Set the embed footer to reflect the user who called the interaction
 
-        await interaction.followup.send(embed=embed)  # Send the resulting embed
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="base64-decode", embed=embed
+        )
 
     @app_commands.command(name="avatar", description="Retrieves an avatar")
     @app_commands.describe(user="The user who you want to see the avatar of")
