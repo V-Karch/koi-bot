@@ -271,10 +271,8 @@ class Utilities(commands.Cog):
         embed.color = blue
 
         await send_followup_message_with_logs(
-            interaction, logger, command_name="about", embed=embed
+            interaction, logger, command_name="about", embed=embed, ephemeral=True
         )
-
-        await interaction.followup.send(embed=embed)
         # ^^ Sending the embed
 
     @app_commands.command(
