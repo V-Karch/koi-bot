@@ -6,7 +6,11 @@ import subprocess
 from discord import app_commands
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
-from logger_help import send_response_message_with_logs
+from logger_help import (
+    send_response_message_with_logs,
+    defer_with_logs,
+    send_followup_message_with_logs,
+)
 
 blue = 0x73BCF8  # Hex color blue stored for embed usage
 owner_id = 923600698967461898
@@ -58,7 +62,9 @@ class Utilities(commands.Cog):
         Returns (None): sends a discord embed as a result and returns nothing
         """
 
-        await interaction.response.defer(ephemeral=True)  # Wait ephemerally
+        logger.display_notice(f"[{interaction.user.id}] is calling /base64-encode")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)  # Wait ephemerally
         embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
         # ^^ Create the embed with it's constructor
         text_as_bytes: bytes = base64.b64encode(bytes(text, "utf-8"))
@@ -70,7 +76,11 @@ class Utilities(commands.Cog):
             icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
         )
         # ^^ Set the embed footer to the one who used to command
-        await interaction.followup.send(embed=embed)  # Send the resulting embed
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="base64-encode", embed=embed
+        )
+        # ^^ Send the result with logs
 
     @app_commands.command(
         name="base64-decode",
