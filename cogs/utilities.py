@@ -31,11 +31,11 @@ class Utilities(commands.Cog):
 
     @app_commands.command(name="restart", description="restarts the bot")
     async def restart(self, interaction: discord.Interaction):
-        logger.display_notice(f"[{interaction.user.id}] is calling /restart")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /restart")
 
         if interaction.user.id != 923600698967461898:
             logger.display_debug(
-                f"[{interaction.user.id}] was refused bot restart access."
+                f"[User {interaction.user.id}] was refused bot restart access."
             )
 
             await send_response_message_with_logs(
@@ -62,7 +62,7 @@ class Utilities(commands.Cog):
         Returns (None): sends a discord embed as a result and returns nothing
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /base64-encode")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /base64-encode")
 
         await defer_with_logs(interaction, logger, ephemeral=True)  # Wait ephemerally
         embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
@@ -99,7 +99,7 @@ class Utilities(commands.Cog):
         Returns (None): Sends a discord embed as a result and returns nothing
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /base64-decode")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /base64-decode")
 
         await defer_with_logs(interaction, logger, ephemeral=True)
         embed = discord.Embed(color=blue, title="✅ Base64 Decoded Result")
@@ -140,7 +140,7 @@ class Utilities(commands.Cog):
         Returns (None): Sends a discord embed as a result and returns nothing
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /avatar")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /avatar")
 
         await defer_with_logs(interaction, logger)
 
@@ -188,7 +188,7 @@ class Utilities(commands.Cog):
             Quite literally nothing
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /invite")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /invite")
 
         await defer_with_logs(interaction, logger, ephemeral=True)
         invite_url = "https://discord.com/api/oauth2/authorize?client_id=1025477778428133379&permissions=8&scope=applications.commands%20bot"
@@ -225,12 +225,14 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided by discord.
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /sync")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /sync")
 
         await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second discord check
         if interaction.user.id != owner_id:  # If the user of the command isn't me
-            logger.display_debug(f"[{interaction.user.id}] was refused access to /sync")
+            logger.display_debug(
+                f"[User {interaction.user.id}] was refused access to /sync"
+            )
 
             await send_followup_message_with_logs(
                 interaction,
@@ -257,7 +259,7 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided by discord.
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /about")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /about")
 
         await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second check from discord
@@ -286,11 +288,11 @@ class Utilities(commands.Cog):
             None
         """
 
-        logger.display_notice(f"[{interaction.user.id}] is calling /display-ip")
+        logger.display_notice(f"[User {interaction.user.id}] is calling /display-ip")
 
         if interaction.user.id != 923600698967461898:
             logger.display_warning(
-                f"[{interaction.user.id}] was denied from using /display-ip"
+                f"[User {interaction.user.id}] was denied from using /display-ip"
             )
 
             await send_response_message_with_logs(
