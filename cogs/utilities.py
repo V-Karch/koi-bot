@@ -257,7 +257,7 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided by discord.
         """
 
-        await interaction.response.defer(ephemeral=True)
+        await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second check from discord
 
         # Creating the Embed
@@ -265,6 +265,10 @@ class Utilities(commands.Cog):
         embed.set_thumbnail(url=self.client.user.avatar.url)
         embed.description = """**Hello! I'm Koi!**\n\nI'm here to give you a good time on discord. I also have a dedicated **Honkai: Star Rail** module.\n\nI am an open source discord bot and you can find my code [here](https://github.com/Luna-Karch/koi-bot)"""
         embed.color = blue
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="about", embed=embed
+        )
 
         await interaction.followup.send(embed=embed)
         # ^^ Sending the embed
