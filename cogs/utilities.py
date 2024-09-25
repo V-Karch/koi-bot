@@ -257,6 +257,8 @@ class Utilities(commands.Cog):
             interaction (discord.Interaction): Provided by discord.
         """
 
+        logger.display_notice(f"[{interaction.user.id}] is calling /about")
+
         await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second check from discord
 
@@ -284,17 +286,33 @@ class Utilities(commands.Cog):
             None
         """
 
+        logger.display_notice(f"[{interaction.user.id}] is calling /display-ip")
+
         if interaction.user.id != 923600698967461898:
-            await interaction.response.send_message("No.", ephemeral=True)
+            logger.display_warning(
+                f"[{interaction.user.id}] was denied from using /display-ip"
+            )
+
+            await send_response_message_with_logs(
+                interaction,
+                logger,
+                command_name="display-ip",
+                message="No.",
+                ephemeral=True,
+            )
             return  # If user isn't me, refuse
 
-        await interaction.response.defer(ephemeral=True)  # Defer until ip is displayed
+        await defer_with_logs(interaction, logger, ephemeral=True)
 
         ip_stdout = subprocess.check_output("ip a | grep inet6", shell=True)
         modified_ip_stdout: str = ip_stdout.decode("utf-8")  # Get IP
 
-        await interaction.followup.send(
-            f"```\n{modified_ip_stdout}\n```", ephemeral=True
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            command_name="display-ip",
+            message=f"```\n{modified_ip_stdout}\n```",
+            ephemeral=True,
         )
 
 
