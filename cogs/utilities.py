@@ -224,16 +224,28 @@ class Utilities(commands.Cog):
         Args:
             interaction (discord.Interaction): Provided by discord.
         """
-        await interaction.response.defer(ephemeral=True)
+
+        logger.display_notice(f"[{interaction.user.id}] is calling /sync")
+
+        await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second discord check
         if interaction.user.id != owner_id:  # If the user of the command isn't me
-            await interaction.followup.send("This command is not for you.")
+            logger.display_debug(f"[{interaction.user.id}] was refused access to /sync")
+
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                command_name="sync",
+                message="This command is not for you.",
+            )
             # ^^ Tell the user to leave it alone
             return  # Escape the function early
 
-        await interaction.followup.send(
-            "Syncing client tree."
-        )  # Respond to the user with affirmation
+        await self.client.tree.sync()
+
+        await send_followup_message_with_logs(
+            interaction, logger, command_name="sync", message="Syncing client tree."
+        )
 
     @app_commands.command(
         name="about", description="Tells you what the bot is all about"
