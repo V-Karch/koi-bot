@@ -290,6 +290,8 @@ class HSR(commands.Cog):
     def parse_data(
         self, hsr_info: StarrailInfoParsed
     ) -> typing.Dict[str, discord.Embed | typing.Dict[str, discord.Embed]]:
+        logger.display_notice(f"[parse_data()] called for user {hsr_info.player.uid}")
+
         player_card = self.make_player_card(hsr_info)
         character_list = self.make_character_list(hsr_info)
         character_cards = self.make_character_cards(hsr_info)
@@ -302,6 +304,8 @@ class HSR(commands.Cog):
             "character_cards": character_cards,
             "lightcone_cards": lightcone_cards,
         }  # ^^ Formatting it nicely
+
+        logger.display_notice(f"[parse_data()] finished for user {hsr_info.player.uid}")
         return resulting_dictionary  # Returning the nice data
 
     @app_commands.command(
