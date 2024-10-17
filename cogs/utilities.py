@@ -112,7 +112,7 @@ class Utilities(commands.Cog):
             An invalid input was given
             """
         except base64.binascii.Error:  # In the case that an invalid input was given
-            embed.description = f"```diff\n- Text was not in base64 format\n```"
+            embed.description = "```diff\n- Text was not in base64 format\n```"
             # ^^ Change the embed description to reflect that
 
         embed.set_footer(
@@ -144,7 +144,7 @@ class Utilities(commands.Cog):
 
         await defer_with_logs(interaction, logger)
 
-        if user == None:  # if the user is not supplied by the command initiator
+        if user is None:  # if the user is not supplied by the command initiator
             user = interaction.user  # The command initiator becomes the user
 
         if not user.avatar:  # If the user does not have an avatar property
