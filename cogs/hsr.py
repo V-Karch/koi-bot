@@ -113,10 +113,16 @@ class HSR(commands.Cog):
             discord.Embed: A discord embed whose title is a list of the characters the user has on their profile.
             To access it, simply access the embed's title property. Ex: character_list.title
         """
+
+        logger.display_notice(f"[make_character_list()] called for user `{hsr_info.player.uid}`")
+
         character_list = discord.Embed(title="")
         character_list.title = ", ".join(
             character.name for character in hsr_info.characters
         )
+
+        logger.display_notice(f"[make_character_list()] finished for user `{hsr_info.player.uid}`")
+
         return character_list
 
     def calculate_total_character_stats(
