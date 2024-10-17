@@ -122,19 +122,19 @@ async def send_followup_message_with_logs(
         )
         logger.display_debug(e)
         return False
-    except TypeError:
+    except TypeError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] You specified both embed and embeds or file and files or thread and thread_name."
         )
         logger.display_debug(e)
         return False
-    except ValueError:
+    except ValueError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
         )
         logger.display_debug(e)
         return False
-    except discord.Forbidden:
+    except discord.Forbidden as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The authorization token for the webhook is incorrect."
         )
