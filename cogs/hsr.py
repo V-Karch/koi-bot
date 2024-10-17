@@ -8,6 +8,14 @@ from mihomo import Language, MihomoAPI
 from mihomo.models import StarrailInfoParsed
 from models.player_card_view import PlayerCardView
 from mihomo.errors import InvalidParams, UserNotFound, HttpRequestError
+from pythondebuglogger.Logger import Logger
+
+from logger_help import (
+    defer_with_logs,
+    send_followup_message_with_logs,
+)
+
+logger: Logger = Logger(enable_timestamps=True)
 
 
 class HSR(commands.Cog):
@@ -40,14 +48,25 @@ class HSR(commands.Cog):
               If there is an HttpRequestError, returns "Net"
               If there is another type of error, returns None
         """
+
+        logger.display_notice(f"[get_hsr_data()] is being called with uid `{uid}`")
         try:  # Attempting to get the data
             data: StarrailInfoParsed = await self.hsrapi.fetch_user(
                 uid, replace_icon_name_with_url=True
             )
+            logger.display_notice(
+                f"[get_hsr_data()] request was made successfully for uid `{uid}`"
+            )
             return data
         except HttpRequestError:
+            logger.display_warning(
+                f"[get_hsr_data()] request failed due to a network error for uid `{uid}`"
+            )
             return "Net"
         except (InvalidParams, UserNotFound):  # If an invalid UID is passed
+            logger.display_error(
+                f"[get_hsr_data()] request failed due to invalid parameters or user with uid `{uid}` could not be found."
+            )
             return None
 
     def make_player_card(self, hsr_info: StarrailInfoParsed) -> discord.Embed:
@@ -65,6 +84,11 @@ class HSR(commands.Cog):
         Returns:
             discord.Embed: The player card embed
         """
+
+        logger.display_notice(
+            f"[make_player_card()] called for user `{hsr_info.player.uid}`"
+        )
+
         player_card_color = choice((self.FIVE_STAR_HEX, self.FOUR_STAR_HEX))
         player_card = discord.Embed(
             color=player_card_color,
@@ -89,6 +113,10 @@ class HSR(commands.Cog):
 
         player_card.description += "```"
 
+        logger.display_notice(
+            f"[make_player_card()] Card created for user `{hsr_info.player.uid}`"
+        )
+
         return player_card
 
     def make_character_list(self, hsr_info: StarrailInfoParsed) -> discord.Embed:
@@ -101,10 +129,20 @@ class HSR(commands.Cog):
             discord.Embed: A discord embed whose title is a list of the characters the user has on their profile.
             To access it, simply access the embed's title property. Ex: character_list.title
         """
+
+        logger.display_notice(
+            f"[make_character_list()] called for user `{hsr_info.player.uid}`"
+        )
+
         character_list = discord.Embed(title="")
         character_list.title = ", ".join(
             character.name for character in hsr_info.characters
         )
+
+        logger.display_notice(
+            f"[make_character_list()] finished for user `{hsr_info.player.uid}`"
+        )
+
         return character_list
 
     def calculate_total_character_stats(
@@ -135,6 +173,10 @@ class HSR(commands.Cog):
             }
         """
 
+        logger.display_notice(
+            f"[calculate_total_character_stats()] called for character `{character.name}`"
+        )
+
         raw_stats = character.attributes + character.additions
         # ^^ Getting the raw value of all the attributes
 
@@ -151,6 +193,10 @@ class HSR(commands.Cog):
                 total_stats[attribute.name]["value"] += attribute.value
                 # ^^ Add the values together
 
+        logger.display_notice(
+            f"[calculate_total_character_stats()] finished for character `{character.name}`"
+        )
+
         return total_stats
 
     def make_character_cards(
@@ -165,6 +211,11 @@ class HSR(commands.Cog):
         Returns:
             typing.Dict[str, discord.Embed]: {character_name (str): character_card (discord.Embed)}
         """
+
+        logger.display_notice(
+            f"[make_character_cards()] being called for user `{hsr_info.player.uid}`"
+        )
+
         character_cards: typing.Dict[str, discord.Embed] = {}
         # ^^ The initial Empty dictionary to be returned
 
@@ -197,6 +248,9 @@ class HSR(commands.Cog):
             character_cards[character.name] = character_card
             # ^^ Add the character card to the dictionary
 
+        logger.display_notice(
+            f"[make_character_cards()] finished for user `{hsr_info.player.uid}`"
+        )
         return character_cards
 
     def make_lightcone_cards(
@@ -212,6 +266,10 @@ class HSR(commands.Cog):
             typing.Dict[str, discord.Embed]: A mapping of character names to embeds
             {"Kafka": discord.Embed(), ...}
         """
+
+        logger.display_notice(
+            f"[make_lightcone_cards()] called for user `{hsr_info.player.uid}`"
+        )
 
         lightcone_cards: typing.Dict[str, discord.Embed] = {}
 
@@ -256,11 +314,16 @@ class HSR(commands.Cog):
 
             lightcone_cards[character.name] = lightcone_embed
 
+        logger.display_notice(
+            f"[make_lightcone_cards()] finished for user `{hsr_info.player.uid}`"
+        )
         return lightcone_cards
 
     def parse_data(
         self, hsr_info: StarrailInfoParsed
     ) -> typing.Dict[str, discord.Embed | typing.Dict[str, discord.Embed]]:
+        logger.display_notice(f"[parse_data()] called for user {hsr_info.player.uid}")
+
         player_card = self.make_player_card(hsr_info)
         character_list = self.make_character_list(hsr_info)
         character_cards = self.make_character_cards(hsr_info)
@@ -273,6 +336,8 @@ class HSR(commands.Cog):
             "character_cards": character_cards,
             "lightcone_cards": lightcone_cards,
         }  # ^^ Formatting it nicely
+
+        logger.display_notice(f"[parse_data()] finished for user {hsr_info.player.uid}")
         return resulting_dictionary  # Returning the nice data
 
     @app_commands.command(
@@ -283,7 +348,16 @@ class HSR(commands.Cog):
         uid="The Honkai: Star Rail UID of the user you want the information on"
     )
     async def hsr(self, interaction: discord.Interaction, uid: int):
-        await interaction.response.defer()  # Bypass the 3 second timeout since this function requires an api call
+        logger.display_notice(f"[User {interaction.user.id}] is calling /hsr")
+        logger.display_notice(
+            f"[User {interaction.user.id}/hsr] command is being deferred"
+        )
+
+        await defer_with_logs(interaction, logger)
+
+        logger.display_notice(
+            f"[User {interaction.user.id}/hsr] attempting to get data"
+        )
         data = await self.get_hsr_data(uid)
 
         if isinstance(data, str):  # If an HttpRequestError occurs
@@ -292,24 +366,41 @@ class HSR(commands.Cog):
                 title="Whoops!",
                 description="Something is wrong with the API service right now. It must be down for an update or something of the sort",
             )
-            await interaction.followup.send(embed=embed)
+            logger.display_warning(
+                f"[User {interaction.user.id}/hsr] command failed due to an HttpRequestError"
+            )
+
+            await send_followup_message_with_logs(
+                interaction, logger, "hsr", embed=embed
+            )
             return  # Quitting the function early
 
-        if data == None:  # If the request failed due to invalid parameters
+        if data is None:  # If the request failed due to invalid parameters
             embed: discord.Embed = discord.Embed(
                 color=self.ERROR_HEX,
                 title="Whoops!",
                 description="Either you provided an invalid input number or the user could not be found in the database.",
             )
-            await interaction.followup.send(embed=embed)
+            logger.display_warning(
+                f"[User {interaction.user.id}/hsr] command failed due to an invalid input or a user not found"
+            )
+            await send_followup_message_with_logs(
+                interaction, logger, "hsr", embed=embed
+            )
             return  # Quitting the function early
 
+        logger.display_notice(
+            f"[User {interaction.user.id}/hsr] attempting to parse data"
+        )
         parsed_data = self.parse_data(data)  # Parsing the retrieved data
 
-        await interaction.followup.send(
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            "hsr",
             embed=parsed_data["player_card"],
             view=PlayerCardView(interaction.user.id, parsed_data),
-        )  # For now, just send the player card
+        )
 
 
 async def setup(client: commands.Bot) -> None:
