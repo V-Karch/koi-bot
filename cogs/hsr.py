@@ -8,7 +8,9 @@ from mihomo import Language, MihomoAPI
 from mihomo.models import StarrailInfoParsed
 from models.player_card_view import PlayerCardView
 from mihomo.errors import InvalidParams, UserNotFound, HttpRequestError
+from pythondebuglogger.Logger import Logger
 
+logger: Logger = Logger(enable_timestamps=True)
 
 class HSR(commands.Cog):
     """
@@ -40,14 +42,19 @@ class HSR(commands.Cog):
               If there is an HttpRequestError, returns "Net"
               If there is another type of error, returns None
         """
+
+        logger.display_notice(f"[get_hsr_data()] is being called with uid `{uid}`")
         try:  # Attempting to get the data
             data: StarrailInfoParsed = await self.hsrapi.fetch_user(
                 uid, replace_icon_name_with_url=True
             )
+            logger.display_notice(f"[get_hsr_data()] request was made successfully for uid `{uid}`")
             return data
         except HttpRequestError:
+            logger.display_warning(f"[get_hsr_data()] request failed due to a network error for uid `{uid}`")
             return "Net"
         except (InvalidParams, UserNotFound):  # If an invalid UID is passed
+            logger.display_error(f"[get_hsr_data()] request failed due to invalid parameters or user with uid `{uid}` could not be found.")
             return None
 
     def make_player_card(self, hsr_info: StarrailInfoParsed) -> discord.Embed:
