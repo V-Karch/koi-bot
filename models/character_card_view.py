@@ -54,6 +54,6 @@ class CharacterCardView(discord.ui.View):
         await send_followup_message_with_logs(
             interaction,
             logger,
-            "hsr",
+            "hsr/lightcone_button",
             embed=self.parsed_data["lightcone_cards"][self.character],
         )
