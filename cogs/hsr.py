@@ -153,6 +153,8 @@ class HSR(commands.Cog):
             }
         """
 
+        logger.display_notice(f"[calculate_total_character_stats()] called for character `{character.name}`")
+
         raw_stats = character.attributes + character.additions
         # ^^ Getting the raw value of all the attributes
 
@@ -168,6 +170,8 @@ class HSR(commands.Cog):
             else:  # If the key already does exist
                 total_stats[attribute.name]["value"] += attribute.value
                 # ^^ Add the values together
+
+        logger.display_notice(f"[calculate_total_character_stats()] finished for character `{character.name}`")
 
         return total_stats
 
