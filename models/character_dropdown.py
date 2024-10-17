@@ -1,6 +1,14 @@
 import discord
 from models.character_card_view import CharacterCardView
 from typing import Dict
+from pythondebuglogger.Logger import Logger
+from logger_help import (
+    send_followup_message_with_logs,
+    defer_with_logs,
+    send_response_message_with_logs,
+)
+
+logger: Logger = Logger(enable_timestamps=True)
 
 
 class CharacterDropdown(discord.ui.Select):
@@ -13,6 +21,9 @@ class CharacterDropdown(discord.ui.Select):
         user_id: int,
         parsed_data: Dict[str, discord.Embed] | Dict[str, Dict[str, discord.Embed]],
     ):
+        logger.display_notice(
+            f"[User {user_id}/hsr] started creating character dropdown"
+        )
         self.user_id = user_id
         self.parsed_data = parsed_data
 
@@ -36,21 +47,29 @@ class CharacterDropdown(discord.ui.Select):
         Returns:
             list[discord.SelectOption]: A list of discord.SelectOption objects. Both the label and value attributes are set to the character name
         """
+        logger.display_notice(f"[User {self.user_id}/hsr] calling make_options()")
         options = [
             discord.SelectOption(label=character, value=character)
             for character in parsed_data["characters"].title.split(", ")
         ]
 
+        logger.display_notice(
+            f"[User {self.user_id}/hsr] finished calling make_options()"
+        )
         return options
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user.id != self.user_id:
-            await interaction.response.send_message(
-                "This interaction is not for you", ephemeral=True
+            await send_response_message_with_logs(
+                interaction,
+                logger,
+                "hsr",
+                "This interaction is not for you",
+                ephemeral=True,
             )
             return
 
-        await interaction.response.defer()
+        await defer_with_logs(interaction, logger)
 
         character_embed = self.parsed_data["character_cards"][self.values[0]]
 
@@ -62,7 +81,10 @@ class CharacterDropdown(discord.ui.Select):
             text=f"Requested by: {interaction.user.name}", icon_url=user_profile_picture
         )
 
-        await interaction.followup.send(
+        await send_followup_message_with_logs(
+            interaction,
+            logger,
+            "hsr",
             embed=character_embed,
             view=CharacterCardView(
                 interaction.user.id, self.values[0], self.parsed_data
