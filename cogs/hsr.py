@@ -72,6 +72,9 @@ class HSR(commands.Cog):
         Returns:
             discord.Embed: The player card embed
         """
+
+        logger.display_notice(f"[make_player_card()] called for user `{hsr_info.player.uid}`")
+
         player_card_color = choice((self.FIVE_STAR_HEX, self.FOUR_STAR_HEX))
         player_card = discord.Embed(
             color=player_card_color,
@@ -95,6 +98,8 @@ class HSR(commands.Cog):
             player_card.description += f"{descriptor:17} -> {value:4d}\n"
 
         player_card.description += "```"
+
+        logger.display_notice(f"[make_player_card()] Card created for user `{hsr_info.player.uid}`")
 
         return player_card
 
