@@ -17,7 +17,7 @@ class CharacterCardView(discord.ui.View):
         ),
     ):
         logger.display_notice(
-            f"[User {user_id}/hsr] creating character card view for `{character.name}`"
+            f"[User {user_id}/hsr] creating character card view for `{character}`"
         )
 
         self.user_id = user_id
