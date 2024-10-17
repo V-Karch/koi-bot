@@ -239,6 +239,8 @@ class HSR(commands.Cog):
             {"Kafka": discord.Embed(), ...}
         """
 
+        logger.display_notice(f"[make_lightcone_cards()] called for user `{hsr_info.player.uid}`")
+
         lightcone_cards: typing.Dict[str, discord.Embed] = {}
 
         for character in hsr_info.characters:
@@ -282,6 +284,7 @@ class HSR(commands.Cog):
 
             lightcone_cards[character.name] = lightcone_embed
 
+        logger.display_notice(f"[make_lightcone_cards()] finished for user `{hsr_info.player.uid}`")
         return lightcone_cards
 
     def parse_data(
