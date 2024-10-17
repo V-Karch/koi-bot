@@ -44,7 +44,7 @@ def load_token() -> str:
             token: str = f.read()
 
         return token.strip()
-    except Exception as exception:
+    except Exception:
         logger.display_error(
             "Failed to read token.txt when calling load_token() in main.py"
         )
@@ -98,7 +98,7 @@ async def load_cogs(client: commands.Bot) -> None:
             try:
                 await client.load_extension(f"cogs.{filename[:-3]}")
                 logger.display_notice(f"Cog {filename} successfully loaded")
-            except Exception as exception:
+            except Exception:
                 logger.display_error(f"Cog {filename} failed to load")
 
 

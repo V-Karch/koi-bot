@@ -23,7 +23,9 @@ async def defer_with_logs(
 
     try:
         await interaction.response.defer(ephemeral=ephemeral)
-        logger.display_notice(f"[User {interaction.user.id}] is having a command defered.")
+        logger.display_notice(
+            f"[User {interaction.user.id}] is having a command defered."
+        )
         return True
     except discord.HTTPException:
         logger.display_error(f"[Interaction {interaction.id}] failed to defer.")

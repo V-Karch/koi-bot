@@ -17,8 +17,8 @@ async function useApiKey(webApiKey) {
     
     // Get Game Info and User Progress
     const gameInfoAndUserProgress = await getGameInfoAndUserProgress(authorization, {
-	    username: searchUsername,
-	    gameId: searchGameId,
+        username: searchUsername,
+        gameId: searchGameId,
     });
 
     console.log(JSON.stringify(gameInfoAndUserProgress, null, 2));

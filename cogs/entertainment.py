@@ -2,7 +2,7 @@ import random
 import discord
 import asyncio
 import requests
-from discord import HTTPException, InteractionResponded, NotFound, app_commands
+from discord import app_commands
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
 from logger_help import (
@@ -39,7 +39,7 @@ class Entertainment(commands.Cog):
             logger.display_error(
                 f"[get_hug_gif()] failed to retrieve a valid json response: {e}"
             )
-            logger.display_error(f"[get_hug_gif()] Actual response data:")
+            logger.display_error("[get_hug_gif()] Actual response data:")
             logger.display_debug(data.text)
             return None
 
@@ -66,7 +66,7 @@ class Entertainment(commands.Cog):
         logger.display_notice(f"[User {interaction.user.id}/hug] calling get_hug_gif()")
         api_results = await active_event_loop.run_in_executor(None, self.get_hug_gif)
 
-        if api_results == None:
+        if api_results is None:
             logger.display_error(
                 f"[User {interaction.user.id}/hug] Failed to retrieve valid json from API"
             )
