@@ -187,6 +187,9 @@ class HSR(commands.Cog):
         Returns:
             typing.Dict[str, discord.Embed]: {character_name (str): character_card (discord.Embed)}
         """
+
+        logger.display_notice(f"[make_character_cards()] being called for user `{hsr_info.player.uid}`")
+
         character_cards: typing.Dict[str, discord.Embed] = {}
         # ^^ The initial Empty dictionary to be returned
 
@@ -219,6 +222,7 @@ class HSR(commands.Cog):
             character_cards[character.name] = character_card
             # ^^ Add the character card to the dictionary
 
+        logger.display_notice(f"[make_character_cards()] finished for user `{hsr_info.player.uid}`")
         return character_cards
 
     def make_lightcone_cards(
