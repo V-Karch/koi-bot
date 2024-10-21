@@ -79,8 +79,7 @@ Here’s a brief overview of some commands you can use with Koi:
 ### Utility Commands
 
 - **/restart**: Restarts the bot, owner only.
-- **/base64-encode**: Converts the given text to base64.
-- **/base64-decode**: Converts the given base64 text to utf-8.
+- **/base64 [type] [text]**: Converts the given text to and from base64 based on the type ["Encode" or "Decode"].
 - **/avatar [?user]**: Retrieves a user's avatar, if none is provided, displays your own avatar.
 - **/invite**: Sends an embed with an invite link to the discord bot.
 - **/sync**: Syncs the bot's command tree.
