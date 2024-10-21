@@ -66,7 +66,7 @@ class Utilities(commands.Cog):
         await defer_with_logs(interaction, logger, ephemeral=True)
         embed = discord.Embed(color=blue, title="")
 
-        if type.name == "Encode":
+        if type == "Encode":
             embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
             # ^^ Create the embed with it's constructor
             text_as_bytes: bytes = base64.b64encode(bytes(text, "utf-8"))
