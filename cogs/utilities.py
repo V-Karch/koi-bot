@@ -48,60 +48,44 @@ class Utilities(commands.Cog):
         )
         os.execv(sys.executable, ["python"] + sys.argv)
 
-    @app_commands.command(name="base64-encode", description="Encodes a given text")
-    @app_commands.describe(text="The text to excode to base64")
-    async def base64_encode(self, interaction: discord.Interaction, text: str) -> None:
-        """
-        Takes an input text and converts it to base64 format before
-        sending it as a discord embed
-
-        Args:
-            interaction (discord.Interaction): Provided automatically by discord, the interaction data from the command
-            text (str): Text provided by the command user, to convert to base64
-
-        Returns (None): sends a discord embed as a result and returns nothing
-        """
-
-        logger.display_notice(f"[User {interaction.user.id}] is calling /base64-encode")
-
-        await defer_with_logs(interaction, logger, ephemeral=True)  # Wait ephemerally
-        embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
-        # ^^ Create the embed with it's constructor
-        text_as_bytes: bytes = base64.b64encode(bytes(text, "utf-8"))
-        # ^^ Convert text to base64 bytes
-        embed.description = f"```\n{text_as_bytes.decode()}\n```"
-        # ^^ Set embed description to text format of base64 bytes
-        embed.set_footer(
-            text="Requested by @" + interaction.user.name,
-            icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
-        )
-        # ^^ Set the embed footer to the one who used to command
-
-        await send_followup_message_with_logs(
-            interaction, logger, command_name="base64-encode", embed=embed
-        )
-        # ^^ Send the result with logs
-
-    @app_commands.command(
-        name="base64-decode",
-        description="Decodes a given base64 string into plain text",
+    @app_commands.command(name="base64", description="Encode or decode base64 text")
+    @app_commands.describe(
+        type="Encode or Decode", text="The text you want to encode or decode"
     )
-    @app_commands.describe(text="The base64 text to decode to plain text")
-    async def base64_decode(self, interaction: discord.Interaction, text: str) -> None:
-        """
-        Takes a base64 input as a string text and attempts to convert it
-        back into plain text.
-
-        Args:
-            interaction (discord.Interaction): Provided by discord, the interaction which called the command.
-            text (str): The input text, should be given in base64 format
-
-        Returns (None): Sends a discord embed as a result and returns nothing
-        """
-
-        logger.display_notice(f"[User {interaction.user.id}] is calling /base64-decode")
+    @app_commands.choices(
+        type=[
+            app_commands.Choice(name="Encode", value="Encode"),
+            app_commands.Choice(name="Decode", value="Decode"),
+        ]
+    )
+    async def base64(
+        self, interaction: discord.Interaction, type: str, text: str
+    ) -> None:
+        logger.display_notice(f"[User {interaction.user.id}] is calling /base64")
 
         await defer_with_logs(interaction, logger, ephemeral=True)
+        embed = discord.Embed(color=blue, title="")
+
+        if type == "Encode":
+            embed = discord.Embed(color=blue, title="✅ Base64 Encoded Result")
+            # ^^ Create the embed with it's constructor
+            text_as_bytes: bytes = base64.b64encode(bytes(text, "utf-8"))
+            # ^^ Convert text to base64 bytes
+            embed.description = f"```\n{text_as_bytes.decode()}\n```"
+            # ^^ Set embed description to text format of base64 bytes
+            embed.set_footer(
+                text="Requested by @" + interaction.user.name,
+                icon_url=interaction.user.avatar.url if interaction.user.avatar else "",
+            )
+            # ^^ Set the embed footer to the one who used to command
+
+            await send_followup_message_with_logs(
+                interaction, logger, command_name="/base64", embed=embed
+            )
+            # ^^ Send the result with logs
+            return
+
+        # At this point type.name should be "Decode"
         embed = discord.Embed(color=blue, title="✅ Base64 Decoded Result")
         # ^^ Create the embed with it's constructor
         try:  # Attempt to convert the base64 input to plain text
