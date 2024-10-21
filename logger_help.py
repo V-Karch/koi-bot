@@ -143,6 +143,7 @@ async def send_followup_message_with_logs(
         logger.display_debug(e)
         return False
 
+
 async def edit_followup_message_with_logs(
     interaction: discord.Interaction,
     logger: Logger,

@@ -1,7 +1,15 @@
 import discord
 from discord.ext import commands
+from pythondebuglogger.Logger import Logger
+from logger_help import (
+    send_followup_message_with_logs,
+    defer_with_logs,
+    edit_followup_message_with_logs,
+)
+
 
 blue = 0x73BCF8  # Hex color blue stored for embed usage
+logger: Logger = Logger(enable_timestamps=True)
 
 
 class RetroGameInfoView(discord.ui.View):
@@ -14,7 +22,7 @@ class RetroGameInfoView(discord.ui.View):
     )
     async def callback(self, interaction: discord.Interaction, button: discord.Button):
         message_id: int = interaction.message.id
-        await interaction.response.defer()
+        await defer_with_logs(interaction, logger)
 
         # Setup Variables
         game_title: str = self.dict_game_info_and_progress_stdout.get(
@@ -75,5 +83,9 @@ class RetroGameInfoView(discord.ui.View):
         button.disabled = True  # Disable the button after it is clicked
 
         # Respond To User
-        await interaction.followup.send(embed=output_embed)
-        await interaction.followup.edit_message(message_id, view=self)
+        await send_followup_message_with_logs(
+            interaction, logger, "retro-profile/button-callback", embed=output_embed
+        )
+        await edit_followup_message_with_logs(
+            message_id, command_name="retro-profile/button-callback", view=self
+        )
