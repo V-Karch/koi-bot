@@ -259,46 +259,6 @@ class Utilities(commands.Cog):
         )
         # ^^ Sending the embed
 
-    @app_commands.command(
-        name="display-ip", description="Displays the IP of the local machine"
-    )
-    async def _display_ip(self, interaction: discord.Interaction) -> None:
-        """
-        An interaction command which displays the ip of the local machine, in the case that it changes due to a router restart
-
-        Args:
-            None
-        """
-
-        logger.display_notice(f"[User {interaction.user.id}] is calling /display-ip")
-
-        if interaction.user.id != 923600698967461898:
-            logger.display_warning(
-                f"[User {interaction.user.id}] was denied from using /display-ip"
-            )
-
-            await send_response_message_with_logs(
-                interaction,
-                logger,
-                command_name="display-ip",
-                message="No.",
-                ephemeral=True,
-            )
-            return  # If user isn't me, refuse
-
-        await defer_with_logs(interaction, logger, ephemeral=True)
-
-        ip_stdout = subprocess.check_output("ip a | grep inet6", shell=True)
-        modified_ip_stdout: str = ip_stdout.decode("utf-8")  # Get IP
-
-        await send_followup_message_with_logs(
-            interaction,
-            logger,
-            command_name="display-ip",
-            message=f"```\n{modified_ip_stdout}\n```",
-            ephemeral=True,
-        )
-
 
 async def setup(client: commands.Bot) -> None:
     """
