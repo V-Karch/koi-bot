@@ -164,3 +164,6 @@ token.txt
 api_info.txt
 .vscode
 venv
+
+# npm caches
+node_modules
