@@ -167,3 +167,4 @@ venv
 
 # npm caches
 node_modules
+.idea
