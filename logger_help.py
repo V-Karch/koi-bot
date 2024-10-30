@@ -152,11 +152,10 @@ async def edit_followup_message_with_logs(
     message: str = None,
     embed: discord.Embed = discord.utils.MISSING,
     view: discord.ui.View = discord.utils.MISSING,
-    ephemeral: bool = False,
 ) -> discord.Message | bool:
     try:
         await interaction.followup.edit_message(
-            message_id, content=message, embed=embed, view=view, ephemeral=ephemeral
+            message_id, content=message, embed=embed, view=view,
         )
         logger.display_notice(
             f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"
