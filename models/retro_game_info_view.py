@@ -87,5 +87,9 @@ class RetroGameInfoView(discord.ui.View):
             interaction, logger, "retro-profile/button-callback", embed=output_embed
         )
         await edit_followup_message_with_logs(
-            message_id, command_name="retro-profile/button-callback", view=self
+            interaction,
+            logger,
+            "retro-profile/button-callback-edit",
+            message_id,
+            view=self,
         )
