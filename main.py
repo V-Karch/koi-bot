@@ -2,16 +2,16 @@ import os
 import typing
 import discord
 from discord.ext import commands
+from models.Config import Config
 from pythondebuglogger.Logger import Logger
 
+config = Config()
 logger: Logger = Logger(enable_timestamps=True)
 logger.display_notice("Debug Logger Initialized")
 
-OWNER_ID = 923600698967461898  # My user ID if someone is cloning this bot from github, this must be changed
-
 SETUP_KWARGS: dict[str, typing.Any] = {
     "intents": discord.Intents.all(),  # What the bot intends to use
-    "command_prefix": "~",  # The command prefix
+    "command_prefix": config.PREFIX,  # The command prefix
     "help_command": None,  # Removing the default help command
     "description": "A cute, general purpose discord bot",  # bot description
 }  # Bot setup keyword arguments
@@ -40,7 +40,7 @@ def load_token() -> str:
     Returns (str): The bot's authorization token
     """
     try:
-        with open("token.txt", "r", encoding="utf-8") as f:
+        with open(f"{config.TOKEN_LOCATION}/token.txt", "r", encoding="utf-8") as f:
             token: str = f.read()
 
         return token.strip()
@@ -108,7 +108,7 @@ logger.display_notice("discord.commands.Bot Object created successfully")
 
 @client.command(name="sync")
 async def _sync(ctx: commands.Context):
-    if ctx.author.id != OWNER_ID:
+    if ctx.author.id != config.OWNER_ID:
         logger.display_error(
             f"User with ID {ctx.user.id} attempted to sync command tree."
         )

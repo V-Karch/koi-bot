@@ -2,8 +2,8 @@ import os
 import sys
 import base64
 import discord
-import subprocess
 from discord import app_commands
+from models.Config import Config
 from discord.ext import commands
 from pythondebuglogger.Logger import Logger
 from logger_help import (
@@ -12,9 +12,8 @@ from logger_help import (
     send_followup_message_with_logs,
 )
 
+config = Config()
 blue = 0x73BCF8  # Hex color blue stored for embed usage
-owner_id = 923600698967461898
-
 
 logger: Logger = Logger(enable_timestamps=True)
 
@@ -33,7 +32,7 @@ class Utilities(commands.Cog):
     async def restart(self, interaction: discord.Interaction):
         logger.display_notice(f"[User {interaction.user.id}] is calling /restart")
 
-        if interaction.user.id != 923600698967461898:
+        if interaction.user.id != config.OWNER_ID:
             logger.display_debug(
                 f"[User {interaction.user.id}] was refused bot restart access."
             )
@@ -213,7 +212,9 @@ class Utilities(commands.Cog):
 
         await defer_with_logs(interaction, logger, ephemeral=True)
         # ^^ Bypass 3 second discord check
-        if interaction.user.id != owner_id:  # If the user of the command isn't me
+        if (
+            interaction.user.id != config.OWNER_ID
+        ):  # If the user of the command isn't me
             logger.display_debug(
                 f"[User {interaction.user.id}] was refused access to /sync"
             )
