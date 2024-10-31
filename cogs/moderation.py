@@ -25,6 +25,9 @@ class Moderation(commands.Cog):
         self.client = client
 
     @app_commands.command(name="kick", description="Kicks a user from the server")
+    @app_commands.describe(
+        member="The member you want to kick", reason="The reason for kicking the member"
+    )
     @app_commands.checks.has_permissions(kick_members=True)
     async def kick(
         self,
@@ -73,6 +76,60 @@ class Moderation(commands.Cog):
             )
             logger.display_error(
                 f"[User {interaction.user.id}/kick] Failed to execute command"
+            )
+
+    @app_commands.command(name="ban", description="Bans a user from the server")
+    @app_commands.describe(
+        member="The member you want to ban", reason="The reason for banning the member"
+    )
+    @app_commands.checks.has_permissions(ban_members=True)
+    async def ban(
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
+        reason: str = "No reason provided.",
+    ):
+        """
+        Bans a specified member from the server, provided the command user has ban permissions.
+
+        Logs the command initiation, defers the interaction, and attempts to ban the member.
+        Sends a success message if the operation is successful or an error message if permissions
+        are insufficient.
+
+        Args:
+            interaction (discord.Interaction): The interaction that triggered this command.
+            member (discord.Member): The member to be banned from the server.
+            reason (str): The reason for the ban, defaults to "No reason provided."
+
+        Raises:
+            discord.Forbidden: If the bot does not have permission to ban the user.
+        """
+        logger.display_notice(f"[User {interaction.user.id}] is running /ban")
+        await defer_with_logs(interaction, logger)
+
+        try:
+            logger.display_notice(
+                f"[User {interaction.user.id}/ban] is attempting to ban [User {member.id}]"
+            )
+            await member.ban(reason=reason)
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                "ban-success",
+                f"{member.display_name} has been banned from the server for: {reason}",
+            )
+            logger.display_notice(
+                f"[User {interaction.user.id}/ban] successfully banned [User {member.id}]"
+            )
+        except discord.Forbidden:
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                "ban-fail-no-permissions",
+                "I couldn't ban this user due to lack of permissions.",
+            )
+            logger.display_error(
+                f"[User {interaction.user.id}/ban] Failed to execute command"
             )
 
 
