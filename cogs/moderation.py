@@ -58,7 +58,7 @@ class Moderation(commands.Cog):
             await send_followup_message_with_logs(
                 interaction,
                 logger,
-                "/kick-success",
+                "kick-success",
                 f"{member.display_name} has been kicked from the server for: {reason}",
             )
             logger.display_notice(
@@ -68,7 +68,7 @@ class Moderation(commands.Cog):
             await send_followup_message_with_logs(
                 interaction,
                 logger,
-                "/kick-fail-no-permissions",
+                "kick-fail-no-permissions",
                 "I couldn't kick this user due to lack of permissions.",
             )
             logger.display_error(
