@@ -132,6 +132,77 @@ class Moderation(commands.Cog):
                 f"[User {interaction.user.id}/ban] Failed to execute command"
             )
 
+    @app_commands.command(name="role", description="Assigns a role to a user")
+    @app_commands.describe(
+        member="The member to whom you want to assign the role",
+        role="The role you want to assign to the member",
+    )
+    @app_commands.checks.has_permissions(manage_roles=True)
+    async def role(
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
+        role: discord.Role,
+    ):
+        """
+        Assigns a specified role to a member, provided the command user has manage roles permissions.
+
+        Logs the command initiation, defers the interaction, and attempts to assign the role.
+        Sends a success message if the operation is successful or an error message if permissions
+        are insufficient or if the role is above the bot's highest role.
+
+        Args:
+            interaction (discord.Interaction): The interaction that triggered this command.
+            member (discord.Member): The member to whom the role will be assigned.
+            role (discord.Role): The role to be assigned to the member.
+
+        Raises:
+            discord.Forbidden: If the bot does not have permission to manage roles.
+        """
+        logger.display_notice(f"[User {interaction.user.id}] is running /role")
+        await defer_with_logs(interaction, logger)
+
+        try:
+            logger.display_notice(
+                f"[User {interaction.user.id}/role] is attempting to assign [Role {role.id}] to [User {member.id}]"
+            )
+
+            # Check if the bot's highest role is above the role to be assigned
+            if role >= interaction.guild.me.top_role:
+                await send_followup_message_with_logs(
+                    interaction,
+                    logger,
+                    "role-fail-high-role",
+                    "I can't assign this role as it is higher than my highest role.",
+                )
+                logger.display_error(
+                    f"[User {interaction.user.id}/role] Failed: [Role {role.id}] is higher than bot's highest role"
+                )
+                return
+
+            await member.add_roles(
+                role, reason=f"Role assigned by {interaction.user.display_name}"
+            )
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                "role-success",
+                f"{member.display_name} has been assigned the role {role.name} successfully.",
+            )
+            logger.display_notice(
+                f"[User {interaction.user.id}/role] successfully assigned [Role {role.id}] to [User {member.id}]"
+            )
+        except discord.Forbidden:
+            await send_followup_message_with_logs(
+                interaction,
+                logger,
+                "role-fail-no-permissions",
+                "I couldn't assign the role due to lack of permissions.",
+            )
+            logger.display_error(
+                f"[User {interaction.user.id}/role] Failed to execute command due to permissions"
+            )
+
 
 async def setup(client: commands.Bot):
     """
