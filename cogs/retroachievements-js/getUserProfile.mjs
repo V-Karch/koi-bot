@@ -39,3 +39,4 @@ fs.readFile("api_info.txt", "utf8", (err, data) => {
 
     useApiKey(data.trim()); // Send the API key to the callback function
 });
+
