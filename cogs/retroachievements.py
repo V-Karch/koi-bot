@@ -40,13 +40,22 @@ class Retroachievements(commands.Cog):
             logger.display_notice(
                 f"[User {interaction.user.id}/retro_profile] calling getUserProfile.mjs subprocess"
             )
-            profile_stdout = await asyncio.create_subprocess_exec("node", "cogs/retroachievements-js/getUserProfile.mjs", username)
-
-            profile_stdout = subprocess.check_output(
-                f"node cogs/retroachievements-js/getUserProfile.mjs {username}",
-                shell=True,
+            profile_stdout = await asyncio.create_subprocess_exec(
+                "node",
+                "cogs/retroachievements-js/getUserProfile.mjs",
+                username,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
             )
-            modified_profile_stdout = profile_stdout.decode("utf-8")
+            stdout, stderr = await profile_stdout.communicate()
+
+            if stderr:
+                logger.display_error(
+                    f"[User {interaction.user.id}/retro_profile] failed in getUserProfile.mjs"
+                )
+                logger.display_debug(str(stderr))
+
+            modified_profile_stdout = stdout.decode("utf-8").strip()
             dict_profile_stdout = json.loads(modified_profile_stdout)
         except Exception as e:
             logger.display_error(
