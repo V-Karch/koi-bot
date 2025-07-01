@@ -50,7 +50,7 @@ class CharacterDropdown(discord.ui.Select):
         logger.display_notice(f"[User {self.user_id}/hsr] calling make_options()")
         options = [
             discord.SelectOption(label=character, value=character)
-            for character in parsed_data["characters"].title.split(", ")
+            for character in parsed_data["characters"].title.split(", ")  # type: ignore
         ]
 
         logger.display_notice(
@@ -71,7 +71,7 @@ class CharacterDropdown(discord.ui.Select):
 
         await defer_with_logs(interaction, logger)
 
-        character_embed = self.parsed_data["character_cards"][self.values[0]]
+        character_embed = self.parsed_data["character_cards"][self.values[0]]  # type: ignore
 
         user_profile_picture = ""
         if interaction.user.avatar:

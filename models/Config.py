@@ -18,7 +18,7 @@ class Config:
         """
         if cls._instance is None:
             cls._instance = super(Config, cls).__new__(cls)
-            cls._instance.config_file = config_file
+            cls._instance.config_file = config_file  # type: ignore
             cls._instance.data = cls._instance.load_config()
         return cls._instance
 
@@ -32,7 +32,7 @@ class Config:
             RuntimeError: If the configuration file is not found or contains invalid JSON.
         """
         try:
-            with open(self.config_file, "r") as f:
+            with open(self.config_file, "r") as f:  # type: ignore
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             raise RuntimeError(f"Error loading configuration: {e}")
