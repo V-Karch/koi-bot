@@ -19,9 +19,9 @@ class RetroGameInfoView(discord.ui.View):
 
     @discord.ui.button(
         label="Game Information", style=discord.ButtonStyle.blurple, emoji="🎮"
-    )
+    )  # type: ignore
     async def callback(self, interaction: discord.Interaction, button: discord.Button):
-        message_id: int = interaction.message.id
+        message_id: int = interaction.message.id  # type: ignore
         await defer_with_logs(interaction, logger)
 
         # Setup Variables
@@ -70,7 +70,7 @@ class RetroGameInfoView(discord.ui.View):
             title=game_title, color=blue, description=""
         )
         output_embed.set_thumbnail(url=game_icon)
-        output_embed.description += f"**Developer: {game_developer}**\n"
+        output_embed.description += f"**Developer: {game_developer}**\n"  # type: ignore
         output_embed.description += f"**Publisher: {game_publisher}**\n"
         output_embed.description += f"**Genre: {game_genre}**\n"
         output_embed.description += f"**Released: {game_release_date}**\n"

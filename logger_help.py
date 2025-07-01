@@ -41,7 +41,7 @@ async def send_response_message_with_logs(
     interaction: discord.Interaction,
     logger: Logger,
     command_name: str,
-    message: str = None,
+    message: str = None,  # type: ignore
     embed: discord.Embed = discord.utils.MISSING,
     view: discord.ui.View = discord.utils.MISSING,
     ephemeral: bool = False,
@@ -65,34 +65,34 @@ async def send_response_message_with_logs(
     try:
         message: discord.Message = await interaction.response.send_message(
             content=message, ephemeral=ephemeral, embed=embed, view=view
-        )
+        )  # type: ignore
         logger.display_notice(
-            f"[User {interaction.user.id}/{command_name}] Successfully sent reply message to [Channel {interaction.channel.id}]"
+            f"[User {interaction.user.id}/{command_name}] Successfully sent reply message to [Channel {interaction.channel.id}]"  # type: ignore
         )
         return message
     except discord.HTTPException as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] Message failed to send."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
-    except discord.NotFound as e:
+    except discord.NotFound as e:  # type: ignore
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] This webhook was not found."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except TypeError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] You specified both embed and embeds or file and files or thread and thread_name."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except ValueError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
 
 
@@ -100,47 +100,47 @@ async def send_followup_message_with_logs(
     interaction: discord.Interaction,
     logger: Logger,
     command_name: str,
-    message: str = None,
+    message: str = None,  # type: ignore
     embed: discord.Embed = discord.utils.MISSING,
     view: discord.ui.View = discord.utils.MISSING,
     ephemeral: bool = False,
-) -> discord.Message | bool:
+) -> discord.Message | bool:  # type: ignore
     try:
         await interaction.followup.send(
             content=message, embed=embed, view=view, ephemeral=ephemeral
         )
         logger.display_notice(
-            f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"
+            f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"  # type: ignore
         )
     except discord.HTTPException as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] Message failed to send."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
-    except discord.NotFound as e:
+    except discord.NotFound as e:  # type: ignore
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] This webhook was not found."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except TypeError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] You specified both embed and embeds or file and files or thread and thread_name."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except ValueError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
-    except discord.Forbidden as e:
+    except discord.Forbidden as e:  # type: ignore
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The authorization token for the webhook is incorrect."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
 
 
@@ -149,44 +149,47 @@ async def edit_followup_message_with_logs(
     logger: Logger,
     command_name: str,
     message_id: int,
-    message: str = None,
+    message: str = None,  # type: ignore
     embed: discord.Embed = discord.utils.MISSING,
     view: discord.ui.View = discord.utils.MISSING,
-) -> discord.Message | bool:
+) -> discord.Message | bool:  # type: ignore
     try:
         await interaction.followup.edit_message(
-            message_id, content=message, embed=embed, view=view,
+            message_id,
+            content=message,
+            embed=embed,
+            view=view,
         )
         logger.display_notice(
-            f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"
+            f"[User {interaction.user.id}/{command_name}] response sent to [Channel {interaction.channel.id}]"  # type: ignore
         )
     except discord.HTTPException as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] Message failed to send."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
-    except discord.NotFound as e:
+    except discord.NotFound as e:  # type: ignore
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] This webhook was not found."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except TypeError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] You specified both embed and embeds or file and files or thread and thread_name."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
     except ValueError as e:
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The length of embeds was invalid, there was no token associated with this webhook or ephemeral was passed with the improper webhook type or there was no state attached with this webhook when giving it a view."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False
-    except discord.Forbidden as e:
+    except discord.Forbidden as e:  # type: ignore
         logger.display_error(
             f"[User {interaction.user.id}/{command_name}] The authorization token for the webhook is incorrect."
         )
-        logger.display_debug(e)
+        logger.display_debug(str(e))
         return False

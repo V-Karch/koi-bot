@@ -33,12 +33,12 @@ class CharacterCardView(discord.ui.View):
         button.disabled = True
 
         try:
-            await interaction.followup.edit_message(interaction.message.id, view=self)
+            await interaction.followup.edit_message(interaction.message.id, view=self)  # type: ignore
         except discord.HTTPException:
             logger.display_error(
                 f"[User {self.user_id}/hsr] command failed due to an HTTPException"
             )
-        except discord.Forbidden:
+        except discord.Forbidden:  # type: ignore
             logger.display_error(
                 f"[User {self.user_id}/hsr] cannot edit a message you did not send"
             )
@@ -55,5 +55,5 @@ class CharacterCardView(discord.ui.View):
             interaction,
             logger,
             "hsr/lightcone_button",
-            embed=self.parsed_data["lightcone_cards"][self.character],
+            embed=self.parsed_data["lightcone_cards"][self.character],  # type: ignore
         )
