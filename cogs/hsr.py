@@ -109,9 +109,9 @@ class HSR(commands.Cog):
         }
 
         for descriptor, value in player_attribute_mapping.items():
-            player_card.description += f"{descriptor:17} -> {value:4d}\n"
+            player_card.description += f"{descriptor:17} -> {value:4d}\n"  # type: ignore
 
-        player_card.description += "```"
+        player_card.description += "```"  # type: ignore
 
         logger.display_notice(
             f"[make_player_card()] Card created for user `{hsr_info.player.uid}`"
@@ -234,10 +234,10 @@ class HSR(commands.Cog):
                     f"+ {stat:28}-> {int(character_stats[stat]['value']):8}\n"
                     if not character_stats[stat]["is_percent"]
                     else f"+ {stat:28}-> {round((character_stats[stat]['value'] * 100), 1):7}%\n"
-                )
+                )  # type: ignore
                 # ^^ String formatting, adding in the stats to the codeblock
 
-            character_card.description += "```"
+            character_card.description += "```"  # type: ignore
 
             character_card.set_author(
                 name=f"{character.name} - Lvl {character.level}/{character.max_level} -  E{character.eidolon}",
@@ -292,19 +292,19 @@ class HSR(commands.Cog):
                 if not attribute.is_percent:
                     lightcone_embed.description += (
                         f"+ {attribute.name:15} -> {int(attribute.displayed_value):8}\n"
-                    )
+                    )  # type: ignore
                 else:
-                    lightcone_embed.description += f"+ {attribute.name:15} -> {round((attribute.value * 100), 1):7}%\n"
+                    lightcone_embed.description += f"+ {attribute.name:15} -> {round((attribute.value * 100), 1):7}%\n"  # type: ignore
 
             for _property in character.light_cone.properties:
                 if not _property.is_percent:
                     lightcone_embed.description += (
                         f"+ {_property.name:15} -> {int(_property.displayed_value):8}\n"
-                    )
+                    )  # type: ignore
                 else:
-                    lightcone_embed.description += f"+ {_property.name:15} -> {round((_property.value * 100), 1):7}%\n"
+                    lightcone_embed.description += f"+ {_property.name:15} -> {round((_property.value * 100), 1):7}%\n"  # type: ignore
 
-            lightcone_embed.description += "```"
+            lightcone_embed.description += "```"  # type: ignore
 
             lightcone_embed.set_image(url=character.light_cone.portrait)
 
@@ -398,8 +398,8 @@ class HSR(commands.Cog):
             interaction,
             logger,
             "hsr",
-            embed=parsed_data["player_card"],
-            view=PlayerCardView(interaction.user.id, parsed_data),
+            embed=parsed_data["player_card"],  # type: ignore
+            view=PlayerCardView(interaction.user.id, parsed_data),  # type: ignore
         )
 
 
