@@ -40,7 +40,7 @@ class Retroachievements(commands.Cog):
             logger.display_notice(
                 f"[User {interaction.user.id}/retro_profile] calling getUserProfile.mjs subprocess"
             )
-            profile_stdout = asyncio.create_subprocess_exec("node", "cogs/retroachievements-js/getUserProfile.mjs", username)
+            profile_stdout = await asyncio.create_subprocess_exec("node", "cogs/retroachievements-js/getUserProfile.mjs", username)
 
             profile_stdout = subprocess.check_output(
                 f"node cogs/retroachievements-js/getUserProfile.mjs {username}",
