@@ -82,7 +82,7 @@ class Entertainment(commands.Cog):
         hug_embed.set_image(url=api_results)
 
         try:
-            avatar_url = interaction.user.avatar.url
+            avatar_url = interaction.user.avatar.url  # type: ignore
         except Exception:
             logger.display_debug(
                 f"[User {interaction.user.id}/hug] Something is up with the users avatar."
