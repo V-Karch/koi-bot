@@ -1,4 +1,5 @@
 import json
+import asyncio
 import discord
 import subprocess
 from datetime import datetime
@@ -39,6 +40,8 @@ class Retroachievements(commands.Cog):
             logger.display_notice(
                 f"[User {interaction.user.id}/retro_profile] calling getUserProfile.mjs subprocess"
             )
+            profile_stdout = asyncio.create_subprocess_shell(f"node cogs/retroachievements-js/getUserProfile.mjs {username}", shell=True)
+
             profile_stdout = subprocess.check_output(
                 f"node cogs/retroachievements-js/getUserProfile.mjs {username}",
                 shell=True,
