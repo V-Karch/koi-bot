@@ -94,7 +94,7 @@ class Utilities(commands.Cog):
             If this throws base64.binascii.Error
             An invalid input was given
             """
-        except base64.binascii.Error:  # In the case that an invalid input was given
+        except base64.binascii.Error:  # type: ignore # In the case that an invalid input was given
             embed.description = "```diff\n- Text was not in base64 format\n```"
             # ^^ Change the embed description to reflect that
 
@@ -111,7 +111,7 @@ class Utilities(commands.Cog):
     @app_commands.command(name="avatar", description="Retrieves an avatar")
     @app_commands.describe(user="The user who you want to see the avatar of")
     async def avatar(
-        self, interaction: discord.Interaction, user: discord.Member = None
+        self, interaction: discord.Interaction, user: discord.Member = None  # type: ignore
     ) -> None:
         """
         Attempts to send an embed with the user's avatar attached in the embed's image slot
@@ -251,7 +251,7 @@ class Utilities(commands.Cog):
 
         # Creating the Embed
         embed: discord.Embed = discord.Embed(title="About Me 🎣")
-        embed.set_thumbnail(url=self.client.user.avatar.url)
+        embed.set_thumbnail(url=self.client.user.avatar.url)  # type: ignore
         embed.description = """**Hello! I'm Koi!**\n\nI'm here to give you a good time on discord. I also have a dedicated **Honkai: Star Rail** module.\n\nI am an open source discord bot and you can find my code [here](https://github.com/V-Karch/koi-bot)"""
         embed.color = blue
 

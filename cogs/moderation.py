@@ -168,7 +168,7 @@ class Moderation(commands.Cog):
             )
 
             # Check if the bot's highest role is above the role to be assigned
-            if role >= interaction.guild.me.top_role:
+            if role >= interaction.guild.me.top_role:  # type: ignore
                 await send_followup_message_with_logs(
                     interaction,
                     logger,
